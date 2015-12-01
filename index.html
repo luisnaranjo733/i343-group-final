@@ -8,19 +8,28 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 
-	<link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+	<link rel="stylesheet" href="css/main.css" />
 
 
 </head>
 <body ng-app="carpoolApp">
 
     <div class="container" ng-controller="carpoolCtrl">
-    <h1>{{ greeting }}</h1>
+    <h1>Whirlpool</h1>
+    <p>Center marker</p>
+    <p>Latitude: {{ latitude }}</p>
+    <p>Longitude: {{ longitude }}</p>
+    <p>Radius: </p>
+    <input type="number" ng-model="radius" ng-change="update_radius()">
+    <br/><br/>
+    <div id="map"></div>
 
     </div>
 
-
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 <script src="js/app.js"></script>
+
 </body>
 </html>
 
