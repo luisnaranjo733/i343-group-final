@@ -21,10 +21,17 @@ carpoolApp.controller('carpoolCtrl', ['$scope', '$http', function($scope, $http)
 
     var circle = L.circle([$scope.latitude, $scope.longitude], $scope.radius * miles_to_meters).addTo(map);
   
+    map.on('click', function(e) {
+        $scope.latitude = e.latlng.lat;
+        $scope.longitude = e.latlng.lng;
+        circle.setLatLng(e.latlng);
+    })
     
     $http.get('data/marker_coordinates.json').then(function(response) {
         response.data.forEach(function(coordinate) {
-            var marker = L.marker([coordinate.lat, coordinate.lng]).addTo(map);
+            var marker = L.marker([coordinate.lat, coordinate.lng]);
+            marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+            marker.addTo(map);
         })
     })
 
