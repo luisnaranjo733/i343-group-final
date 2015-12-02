@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Carpool App</title>
+    <link rel="icon" type="image/png" href="img/whirlpool.png">
+
+    <title>Carpool App</title>
 
     <!--
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
@@ -20,6 +22,7 @@
     <script src="js/firebase.js"></script>
     <script src="js/angularfire.min.js"></script>
     <script src="js/angular-ui-router.min.js"></script>
+    <script src="js/validate.js"></script>
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
 
@@ -30,11 +33,11 @@
 <body ng-app="carpoolApp">
 
     <div class="container" ng-controller="carpoolCtrl">
-    <h1>Whirlpool</h1>
-
+        <h1>Whirlpool</h1>
+        <div class="clearfix" ui-view></div>
     </div>
 
-    <div class="clearfix" ui-view></div>
+
 
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
