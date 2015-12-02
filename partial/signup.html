@@ -1,0 +1,33 @@
+<div class="col-sm-8 col-md-6 center">
+  <form  name="signupForm" novalidate ng-submit="signupForm.$valid && signup();">
+
+    <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
+      <div ng-show="signupForm.email.$error.required">You must input an email</div>
+      <div ng-show="signupForm.email.$error.email">That is not an email!</div>
+      <div ng-show="signupForm.email.$error.uwEmail">That is not a UW email!</div>
+    </div>
+    <input type="email" id="email" name="email" placeholder="UW Email" ng-model="email" class="form-control" tabindex="1" required autocomplete="on" ui-validate="{uwEmail: 'validUwEmail($value)'}" ng-model-options="{ updateOn: 'blur' }">
+
+
+    <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
+      <div ng-show="signupForm.password.$error.required">You must input a password</div>
+    </div>
+    <input type="password" id="password" name="password" placeholder="Password" ng-model="password" class="form-control" tabindex="2" required autocomplete="off">
+
+    <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
+      <div ng-show="signupForm.passwordConfirm.$error.match">Passwords must match</div>
+    </div>
+    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" ng-model="passwordConfirm" class="form-control" tabindex="3" required autocomplete="off" ui-validate="{match: 'passwordsMatch($modelValue)'}" ng-model-options="{ updateOn: 'blur' }">
+
+
+    <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
+      <div ng-show="signupForm.phone.$error.required || signupForm.phone.$error.number">A valid phone number is required</div>
+      <div ng-show="signupForm.phone.$error.min || signupForm.phone.$error.max">phone number should be 10 digits</div>
+    </div>
+    <input type="number" class="form-control" min="10" max="10" id="phone" name="phone" placeholder="Phone Number" ng-model="phone" required tabindex="4">
+
+
+
+    <button id="search-btn" class="btn btn-primary btn-block" type="submit">Sign Up</button>
+  </form>
+</div>

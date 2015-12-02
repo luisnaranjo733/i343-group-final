@@ -1,16 +1,25 @@
-<form class="col-sm-8 col-md-6 center" name="loginForm" novalidate ng-submit="loginForm.$valid && login();">
-  <span style="color:red" ng-show="loginForm.$submitted && loginForm.$dirty && loginForm.$invalid">
-    <span style='display:block' ng-show="loginFom.email.$error.required">You must input an email</span>
-    <span style='display:block' ng-show="loginForm.email.$error.email">That is not an email!</span>
-    <span ng-show="loginForm.email.$error.uwEmail">That is not a UW email!</span>
-  </span>
-  <div class="form-group">
-    <input type="text" id="email" name="email" placeholder="UW Email" ng-model="email" class="form-control" tabindex="1" required autocomplete="on" ui-validate="{uwEmail: 'validUwEmail($value)'}">
+<div class="col-sm-8 col-md-6 center">
+  <form  name="loginForm" novalidate ng-submit="loginForm.$valid && login();">
 
-    <span style="color:red" ng-show="loginForm.$submitted && loginForm.$dirty && loginForm.$invalid">
-      <span style='display:block' ng-show="loginForm.password.$error.required">You must input a password</span>
-    </span>
+    <div style="color:red" ng-show="loginForm.$submitted && loginForm.$dirty && loginForm.$invalid">
+      <div ng-show="loginFom.email.$error.required">You must input an email</div>
+      <div ng-show="loginForm.email.$error.email">That is not an email!</div>
+      <div ng-show="loginForm.email.$error.uwEmail && !loginForm.email.$error.email">That is not a UW email!</div>
+    </div>
+    <input type="email" id="email" name="email" placeholder="UW Email" ng-model="email" class="form-control" tabindex="1" required autocomplete="on" ui-validate="{uwEmail: 'validUwEmail($modelValue)'}" ng-model-options="{ updateOn: 'blur' }">
+
+
+    <div style="color:red" ng-show="loginForm.$submitted && loginForm.$dirty && loginForm.$invalid">
+      <div ng-show="loginForm.password.$error.required">You must input a password</div>
+    </div>
     <input type="password" id="password" name="password" placeholder="Password" ng-model="password" class="form-control" tabindex="2" required autocomplete="off">
+
+
+    <button id="search-btn" class="btn btn-primary btn-block" type="submit">Login</button>
+  </form>
+  <br>
+  <div>
+    <h4>Dont Have An Account?</h4>
+    <button class="btn btn-success btn-block" ui-sref="Signup()">Sign Up</button>
   </div>
-  <button id="search-btn" class="btn btn-primary btn-block" type="submit">Login</button>
-</form>
+</div>

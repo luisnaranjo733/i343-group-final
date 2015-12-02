@@ -17,31 +17,31 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject) {
 
     var ref = new Firebase("https://uwcarpool.firebaseio.com/data");
 
-    var login = function() {
-        ref.authWithPassword({
-          email    : $scope.email,
-          password : $scope.password
-        }, function(error, authData) {
-          if (error) {
-            console.log("Login Failed!", error);
-          } else {
-            console.log("Authenticated successfully with payload:", authData);
-          }
-        });
-    }
+    // var login = function() {
+    //     ref.authWithPassword({
+    //       email    : $scope.email,
+    //       password : $scope.password
+    //     }, function(error, authData) {
+    //       if (error) {
+    //         console.log("Login Failed!", error);
+    //       } else {
+    //         console.log("Authenticated successfully with payload:", authData);
+    //       }
+    //     });
+    // }
 
-    var signup = function() {
-        ref.createUser({
-          email    : $scope.email,
-          password : $scope.password
-        }, function(error, userData) {
-          if (error) {
-            console.log("Error creating user:", error);
-          } else {
-            console.log("Successfully created user account with uid:", userData.uid);
-          }
-        });
-    }
+    // var signup = function() {
+    //     ref.createUser({
+    //       email    : $scope.email,
+    //       password : $scope.password
+    //     }, function(error, userData) {
+    //       if (error) {
+    //         console.log("Error creating user:", error);
+    //       } else {
+    //         console.log("Successfully created user account with uid:", userData.uid);
+    //       }
+    //     });
+    // }
     // download the data into a local object
     var syncObject = $firebaseObject(ref);
     // synchronize the object with a three-way data binding
@@ -65,7 +65,7 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
             return 'partial/template/by/' + stateParams.step + '.html';
         }
     })
-    .state('Home', {
+    .state('Login', {
         url: "/",
         templateUrl: "partial/login.html",
         controller: function($scope, $firebaseObject) {
@@ -79,6 +79,35 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
                     console.log("Login Failed!", error);
                   } else {
                     console.log("Authenticated successfully with payload:", authData);
+                  }
+                });
+            }
+        }
+    })
+    .state('Signup', {
+        url: "/singup",
+        templateUrl: "partial/signup.html",
+        controller: function($scope, $firebaseObject) {
+            $scope.passwordsMatch = function(value) {
+                if (angular.isUndefined(value)) {
+                    return false;
+                }
+                if ($scope.value === $scope.password) {
+                    return true;
+                }
+                return false;
+            }
+
+            var ref = new Firebase("https://uwcarpool.firebaseio.com/data");
+            var signup = function() {
+                ref.createUser({
+                  email    : $scope.email,
+                  password : $scope.password
+                }, function(error, userData) {
+                  if (error) {
+                    console.log("Error creating user:", error);
+                  } else {
+                    console.log("Successfully created user account with uid:", userData.uid);
                   }
                 });
             }
