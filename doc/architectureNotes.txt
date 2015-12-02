@@ -1,0 +1,60 @@
+DATA ARCHITECTURE
+
+--- USER ---
+profile {
+    UserID INT,
+    name STRING,
+    email STRING,
+    proPic STRING,
+    phone INT,
+    address{
+        lat FLOAT,
+        lon FLOAT
+    },
+    schedule {
+        ride {
+            time TIMESTAMP,
+            car CARID
+        }
+    }
+}
+
+--- CAR ---
+car {
+    carID INT,
+    driver OBJ,
+    seat# INT,
+    rider {} OBJ_ARRAY,
+    DateCreated TIMESTAMP,
+    RideTime TIMESTAMP
+}
+
+
+
+see locations of riders
+set # of seats
+time of leaving
+
+
+
+USERS
+profile with editing
+    name
+    email - must be @uw.edu
+    password
+    phone
+    address
+    schedule to and from ranges CROSS filter with driver sched
+
+signup
+
+
+WORK
+
+sign up form with validation - angular
+login form
+ui-router - angular
+driver -  map with popup selects rider ( with info shed link to pic/profile) and button to pick (notify the rider MAYBE)
+rider - request for rides
+user profile - editing
+
