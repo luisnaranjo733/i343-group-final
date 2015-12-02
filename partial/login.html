@@ -1,6 +1,7 @@
 <div class="col-sm-8 col-md-6 center">
   <form  name="loginForm" novalidate ng-submit="loginForm.$valid && login();">
 
+    <h4>Email</h4>
     <div style="color:red" ng-show="loginForm.$submitted && loginForm.$dirty && loginForm.$invalid">
       <div ng-show="loginFom.email.$error.required">You must input an email</div>
       <div ng-show="loginForm.email.$error.email">That is not an email!</div>
@@ -8,7 +9,7 @@
     </div>
     <input type="email" id="email" name="email" placeholder="UW Email" ng-model="email" class="form-control" tabindex="1" required autocomplete="on" ui-validate="{uwEmail: 'validUwEmail($modelValue)'}" ng-model-options="{ updateOn: 'blur' }">
 
-
+    <h4>Password</h4>
     <div style="color:red" ng-show="loginForm.$submitted && loginForm.$dirty && loginForm.$invalid">
       <div ng-show="loginForm.password.$error.required">You must input a password</div>
     </div>
