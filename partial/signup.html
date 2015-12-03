@@ -3,22 +3,30 @@
 
   <form  name="signupForm" novalidate ng-submit="signupForm.$valid && signupUser()">
 
+    <h4>Name</h4>
+    <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
+      <div ng-show="signupForm.name.$error.required">You must input an name</div>
+    </div>
+    <input type="text" id="name" name="name" placeholder="Name" ng-model="signup.name" class="form-control" tabindex="1" required autocomplete="on">
+
     <h4>Email</h4>
     <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
       <div ng-show="signupForm.email.$error.required">You must input an email</div>
-      <!-- <div ng-show="signupForm.email.$error.email">That is not an email!</div> -->
-      <div ng-show="signupForm.email.$error.uwEmail">That is not a UW email!</div>
+      <div ng-show="signupForm.email.$error.uwEmail && !signupForm.email.$error.required">That is not a UW email!</div>
     </div>
     <input type="text" id="email" name="email" placeholder="UW Email" ng-model="signup.email" class="form-control" tabindex="1" required autocomplete="on" ui-validate="{uwEmail: 'validUwEmail($value)'}" ng-model-options="{ updateOn: 'default' }">
 
     <h4>Password</h4>
+    <h6>Passwords must be between 8 and 26 characters</h6>
     <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
       <div ng-show="signupForm.password.$error.required">You must input a password</div>
+      <div ng-show="signupForm.password.$error.minlength">Your password must be at least 8 characters</div>
+      <div ng-show="signupForm.password.$error.maxlength">Your password cannot be more than 26 characters</div>
     </div>
-    <input type="password" id="password" name="password" placeholder="Password" ng-model="signup.password" class="form-control" tabindex="2" required autocomplete="off">
+    <input type="password" id="password" name="password" placeholder="Password" ng-model="signup.password" class="form-control" tabindex="2" required autocomplete="off" ng-minlength="8" ng-maxlength="26">
 
     <div style="color:red" ng-show="signupForm.$submitted && signupForm.$dirty && signupForm.$invalid">
-      <div ng-show="signupForm.passwordConfirm.$error.match">Passwords must match</div>
+      <div ng-show="signupForm.passwordConfirm.$error.match && !signupForm.password.$error.minlength && !signupForm.password.$error.maxlength">Passwords must match</div>
     </div>
     <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" ng-model="signup.passwordConfirm" class="form-control" tabindex="3" autocomplete="off" ui-validate="{match: 'signup.password === $value'}" ui-validate-watch=" 'signup.password' " ng-model-options="{ updateOn: 'default' }">
 

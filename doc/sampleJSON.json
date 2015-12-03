@@ -1,0 +1,8 @@
+{
+    "users" : {
+        "sampleUser" : {
+            "email" : "test@test.com",
+            "name" : "test user"
+        }
+    }
+}
