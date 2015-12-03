@@ -42,20 +42,26 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
     return {
         validate: function() {
-            console.log("cookie: " + localStorage.getItem('whirlpoolAuthCookie'));
+
+            //check to see if cookie even exists
             if(localStorage.getItem('whirlpoolAuthCookie') == null) {
                 console.log('failed');
                 return false;
             }else {
+
+                //gets cookie, parses and gets current time
                 var cookieString = localStorage.getItem('whirlpoolAuthCookie');
                 var cookie = JSON.parse(cookieString);
                 var timeStamp = Math.floor(Date.now() / 1000);
+
+                //checks to see if cookie has passed its expiration date
                 if (cookie.expire < timeStamp) {
-                    console.log("expired");
+                    // console.log("expired");
                     localStorage.removeItem('whirlpoolAuthCookie');
                     return false;
                 }else {
-                    console.log("refeshing");
+                    //refeshes the expiration date
+                    // console.log("refeshing");
                     cookie.expire = timeStamp + (30 * 60);
                     cookieString = JSON.stringify(cookie);
                     localStorage.setItem('whirlpoolAuthCookie', cookieString);
@@ -93,7 +99,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         return false;
     };
 
-
+    //validates the cookie on every view load to simulate how it would work in a page refresh situation
     $scope.$on('$viewContentLoaded',
     function(event){
         if(authService.validate()) {
@@ -104,7 +110,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 
             }
         } else {
-            console.log($state.current.name);
+            // console.log($state.current.name);
             if($state.current.name == "Login" || $state.current.name == "Signup") {
 
             } else {
@@ -157,6 +163,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         lng: 84
     }
 
+    //creates the firebase auth user and then attaches the uid to the user object. inserts the user object into users
     $scope.signupUser = function() {
 
         console.log("signup fired");
@@ -183,15 +190,16 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                     lat : $scope.signup.lat,
                     lng : $scope.signup.lng
                 }
-                // console.log(userService.getUsers());
+
                 userService.addUser(user);
-                // console.log(userService.getUsers());
             }
         });
     }
 }])
 .controller('loginController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$state', 'authService', function($scope, $firebaseObject, FIREBASE_URI, userService, $state, authService){
     var ref = new Firebase(FIREBASE_URI);
+
+    //logs in the user with firebase and then attaches their associated user object
     $scope.login = function() {
         ref.authWithPassword({
           email    : $scope.email,
@@ -204,11 +212,19 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             // console.log(authData.uid);
 
             var users = userService.getUsers();
+
+            //iterates over users to find a match
             users.$loaded().then(function(x){
                 x.forEach(function(user, id) {
                     if(user.uid == authData.uid) {
+
+                        //three way binds the match to currentUser so it will persist around site
                         userService.getUser(user.$id).$bindTo($scope, "currentUser");
+
+                        //adds the authorization cookie
                         authService.authorize(authData);
+
+                        //goes to the homepage
                         $state.go("Home");
                     }
                 });
@@ -252,5 +268,4 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
         templateUrl: "partial/home.html",
         controller: "homeController"
     })
-
 });
