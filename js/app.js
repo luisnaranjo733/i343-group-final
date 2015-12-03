@@ -79,6 +79,9 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
             }
             var cookieString = JSON.stringify(cookie);
             localStorage.setItem('whirlpoolAuthCookie', cookieString);
+        },
+        logout: function() {
+            localStorage.removeItem('whirlpoolAuthCookie');
         }
     }
 });
@@ -98,6 +101,11 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         }
         return false;
     };
+
+    $scope.logout = function() {
+        authService.logout();
+        $state.go("Login");
+    }
 
     //validates the cookie on every view load to simulate how it would work in a page refresh situation
     $scope.$on('$viewContentLoaded',
