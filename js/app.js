@@ -1,12 +1,4 @@
 'use strict';
-
-// conversion factor between meters/miles
-// meters = miles * const
-// miles  = meters / const
-const meters_miles_const = 1609.34;
-
-
-
 var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'firebase']);
 
 carpoolApp.constant("FIREBASE_URI", "https://uwcarpool.firebaseio.com/");
@@ -98,10 +90,6 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
 carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, authService, $state) {
 
-
-
-    // auth stuff below here
-
     $scope.validUwEmail = function(value) {
         if (angular.isUndefined(value)) {
             return false;
@@ -127,22 +115,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 console.log("already validated");
                 $state.go("Home");
             }else {
-                var map = $('#map');
-                // This callback function gets called twice for some reason
-                // the first time, the <div id="map"></div> element is not loaded
-                // so we check to make sure it is before loading the leaflet map
-                // to avoid errors
-                if (map[0]) {
-                    console.log(map)
 
-                    var map = L.map('map').setView([47.745169, -122.288939], 11);
-                    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-                        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-                        maxZoom: 18,
-                        id: 'mapbox.outdoors',
-                        accessToken: 'pk.eyJ1IjoibHVpc25hcmFuam83MzMiLCJhIjoiY2lmeDVra3Q1M3A0Z3U2a3N3d2JzNXFicCJ9.nLZGt1FxRVUxOUL-_1wrIg'
-                    }).addTo(map);
-                }
             }
         } else {
             // console.log($state.current.name);
@@ -154,10 +127,9 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             }
 
         }
-
     });
 })
-.controller('signupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', function($scope, $firebaseObject, userService, FIREBASE_URI) {
+.controller('singupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', function($scope, $firebaseObject, userService, FIREBASE_URI) {
 
 
 
@@ -271,9 +243,36 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         });
     }
 }])
-.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', function($scope, $firebaseObject, FIREBASE_URI, userService){
+.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth){
     var ref = new Firebase(FIREBASE_URI);
+    $scope.authObj = $firebaseAuth(ref);
+    var map = L.map('map').setView([47.745169, -122.288939], 11);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.outdoors',
+        accessToken: 'pk.eyJ1IjoibHVpc25hcmFuam83MzMiLCJhIjoiY2lmeDVra3Q1M3A0Z3U2a3N3d2JzNXFicCJ9.nLZGt1FxRVUxOUL-_1wrIg'
+    }).addTo(map);
 
+    var rider_markers = L.layerGroup([]);
+
+    $http.get('data/marker_coordinates.json').then(function(response) {
+        response.data.forEach(function(coordinate) {
+            var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
+            marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+            marker.addTo(rider_markers);
+        });
+        rider_markers.addTo(map)
+        //filter_markers(circle);
+    })
+
+    var authData = $scope.authObj.$getAuth();
+    console.log(authData);
+    if (authData) {
+        var uid = authData.uid;
+        uid = "-K4eKE5Z9DcU3qG7Geyb";
+        console.log(userService.getUser(uid));
+    }
 }]);
 
 
@@ -295,9 +294,9 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
         controller: "loginController"
     })
     .state('Signup', {
-        url: "/signup",
+        url: "/singup",
         templateUrl: "partial/signup.html",
-        controller: "signupController"
+        controller: "singupController"
     })
     .state('Home', {
         url: "/",
