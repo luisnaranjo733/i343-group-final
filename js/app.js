@@ -1,4 +1,7 @@
 'use strict';
+
+const meters_miles_const = 1609.34;
+
 var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'firebase']);
 
 carpoolApp.constant("FIREBASE_URI", "https://uwcarpool.firebaseio.com/");
@@ -18,7 +21,8 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
     //     console.log(obj.$value); // null!
     // });
 
-    return {
+
+    var obj = {
         getUsers: function() {
             return users;
         },
@@ -27,15 +31,21 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
             return $firebaseObject(userRef);
         },
         addUser: function(user) {
-            users.$add(user);
+            //users.$add(user);
+            console.log('adding user')
+            var userRef = users.$ref().child(user.uid);
+            userRef.set(user);
+            return $firebaseObject(userRef);
+
         },
         updateUser: function(id) {
             users.save(id);
         },
         removeUser: function(id) {
             users.$remove(id);
-        }
-    }
+        },
+    };
+    return obj
 })
 .factory('authService', function($firebaseObject, FIREBASE_URI) {
     var ref = new Firebase(FIREBASE_URI + 'users');
@@ -129,7 +139,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         }
     });
 })
-.controller('singupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', function($scope, $firebaseObject, userService, FIREBASE_URI) {
+.controller('signupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', function($scope, $firebaseObject, userService, FIREBASE_URI) {
 
 
 
@@ -243,8 +253,120 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         });
     }
 }])
-.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', function($scope, $firebaseObject, FIREBASE_URI, userService){
+.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth){
+
+    var slider = $('#ex1').slider({
+        formatter: function(value) {
+            return 'Pick up zone radius: ' + value;
+        },
+        tooltip: 'always'
+    });
+    slider.slider('disable');
+
     var ref = new Firebase(FIREBASE_URI);
+    $scope.authObj = $firebaseAuth(ref);
+
+    var map = L.map('map').setView([47.745169, -122.288939], 11);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.outdoors',
+        accessToken: 'pk.eyJ1IjoibHVpc25hcmFuam83MzMiLCJhIjoiY2lmeDVra3Q1M3A0Z3U2a3N3d2JzNXFicCJ9.nLZGt1FxRVUxOUL-_1wrIg'
+    }).addTo(map);
+
+    var rider_markers = L.layerGroup([]);
+
+    // loops over each marker in rider_markers layerGroup
+    // highlights it if its is within the circle
+    // dims it if is not
+    // called from  $scope.update_radius()
+    // which is called from the html view
+    var filter_markers = function(circle) {
+        rider_markers.eachLayer(function(layer) {
+            // Lat, long of current point
+            var layer_lat_long = layer.getLatLng();
+            var circle_lat_long = circle.getLatLng();
+            var distance_from_layer_circle = layer_lat_long.distanceTo(circle_lat_long);
+            //console.log(distance_from_layer_circle / meters_miles_const);
+            var miles_away = distance_from_layer_circle / meters_miles_const;
+
+            if (miles_away < circle.getRadius() / meters_miles_const) {
+                layer.setOpacity(1);
+            } else {
+                layer.setOpacity(0.6);
+            }
+        })    
+    }
+
+    $http.get('data/marker_coordinates.json').then(function(response) {
+        response.data.forEach(function(coordinate) {
+            var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
+            marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+            marker.addTo(rider_markers);
+        });
+        rider_markers.addTo(map)
+        
+    });
+    var authData = $scope.authObj.$getAuth();
+    if (authData) {
+        var user = userService.getUser(authData.uid).$loaded(function(user) {
+
+
+            // radius in miles
+            // attach to angular model
+            // and html input element
+            
+            if (user.pickUpRadius) {
+                console.log('retrieved pick up radius from auth');
+                $scope.pickUpRadius = user.pickUpRadius;
+            } else {
+                console.log('initializing pick up radius');
+                user.pickUpRadius = 2;
+                user.$save();
+                $scope.pickUpRadius = user.pickUpRadius;
+            }
+            slider.slider('setValue', $scope.pickUpRadius)
+            slider.slider('enable');
+
+            slider.on('slide', function(slideEvent) {
+                $scope.pickUpRadius = slideEvent.value;
+                $scope.update_radius();
+            });
+
+
+            var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
+            filter_markers(circle);
+            $scope.update_radius = function() {
+                circle.setRadius($scope.pickUpRadius * meters_miles_const);
+                filter_markers(circle);
+                user.pickUpRadius = $scope.pickUpRadius;
+                user.$save();
+            }
+
+            // Create an event listener while mouse is being held down on the circle
+            circle.on('mousedown', function(mousedown_event) {
+                map.on('mousemove', function(mousemove_event) {
+                    circle.setLatLng(mousemove_event.latlng);
+
+         
+                    // highlights markers within radius of circle
+                    // dims all others
+                    filter_markers(circle);
+                })
+            });
+
+            // remove event listener when mouse is removed
+            map.on('mouseup', function(e) {
+                map.removeEventListener('mousemove');
+                user.lat = e.latlng.lat;
+                user.lng = e.latlng.lng;
+                user.$save();
+            })
+        });
+
+    
+
+    }
 
 }]);
 
@@ -267,9 +389,9 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
         controller: "loginController"
     })
     .state('Signup', {
-        url: "/singup",
+        url: "/signup",
         templateUrl: "partial/signup.html",
-        controller: "singupController"
+        controller: "signupController"
     })
     .state('Home', {
         url: "/",
