@@ -1,0 +1,23 @@
+{
+  "name": "i343-group-final",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luisnaranjo733/i343-group-final.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luisnaranjo733/i343-group-final/issues"
+  },
+  "homepage": "https://github.com/luisnaranjo733/i343-group-final#readme",
+  "dependencies": {}
+}

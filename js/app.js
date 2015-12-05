@@ -254,6 +254,15 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
     }
 }])
 .controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth){
+
+    var slider = $('#ex1').slider({
+        formatter: function(value) {
+            return 'Pick up zone radius: ' + value;
+        },
+        tooltip: 'always'
+    });
+    slider.slider('disable');
+
     var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
 
@@ -316,6 +325,15 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 user.$save();
                 $scope.pickUpRadius = user.pickUpRadius;
             }
+            slider.slider('setValue', $scope.pickUpRadius)
+            slider.slider('enable');
+
+            slider.on('slide', function(slideEvent) {
+                $scope.pickUpRadius = slideEvent.value;
+                $scope.update_radius();
+            });
+
+
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
             filter_markers(circle);
             $scope.update_radius = function() {
