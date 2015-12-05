@@ -1,3 +1,55 @@
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li class="nav active"><a href="#Home" data-toggle="tab">Home</a></li>
+        <li class="nav"><a href="#Rider" data-toggle="tab">Rider</a></li>
+        <li class="nav"><a href="#Driver" data-toggle="tab">Driver</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="Home">
+        	<h1>Home</h1>
+        </div>
+        <div class="tab-pane fade" id="Rider">
+        	<h1>Rider</h1>
+        	<h2>Current Pick-Up Times</h2>
+        	<ul>
+        		<li>Monday, 7:00 AM</li>
+        		<li>Tuesday, 9:00 AM</li>
+        		<li>Wednesday, 7:00 AM</li>
+        		<li>Thursday, 10:00 AM</li>
+        		<li>Friday, 7:00 AM</li>
+        	</ul>
+        </div>
+        <div class="tab-pane fade" id="Driver">
+        	<h1>Driver</h1>
+        	<div class="table-responsive">          
+  				<table class="table">
+    				<thead>
+    					<tr>
+	        				<th>Day:</th>
+					        <th>Monday</th>
+					        <th>Tuesday</th>
+					        <th>Wednesday</th>
+					        <th>Thursday</th>
+					        <th>Friday</th>
+      					</tr>
+    				</thead>
+    				<tbody>
+				      	<tr>
+				        	<td>Number of Riders:</td>
+				        	<td>1</td>
+				        	<td>3</td>
+				        	<td>2</td>
+				        	<td>1</td>
+				        	<td>4</td>
+				      	</tr>
+				    </tbody>
+  				</table>
+  			</div>
+        </div>
+    </div>
+</div>
 <h1>Welcome {{currentUser.name}}!</h1>
 <button class="btn btn-primary" ng-click="logout()">Logout</button>
 
