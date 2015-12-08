@@ -256,6 +256,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 .controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
     $scope.toggleDriverView = function() {
+        console.log('switching to driver state')
         $state.go('Home.Drivers')
     }
 
