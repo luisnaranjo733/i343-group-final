@@ -253,7 +253,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         });
     }
 }])
-.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth){
+.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
 
 
@@ -367,12 +367,17 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 user.$save();
             })
         });
-
-    
-
+    }
+    $scope.drivers = function() {
+        console.log('drivers')
+        $state.go('Drivers')
     }
 
+}])
+.controller('driverController', ['$scope', function($scope) {
+    console.log('driver controller'); 
 }]);
+
 
 
 carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
@@ -401,5 +406,10 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
         url: "/",
         templateUrl: "partial/home.html",
         controller: "homeController"
+    })
+    .state('Drivers', {
+        url: "/driver",
+        templateUrl: "partial/driver.html",
+        controller: "driverController"
     })
 });

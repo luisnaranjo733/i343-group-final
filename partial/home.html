@@ -11,8 +11,11 @@ ng-model="pickUpRadius" ng-change="update_radius()" />
 <br><br><br>
 
 <uib-tabset>
-    <uib-tab heading="Drivers" active="true">Drivers</uib-tab>
-    <uib-tab heading="Riders">Riders</uib-tab>
+    <uib-tab heading="Drivers" select="drivers()">
+        Drivers tab
+        <div class="clearfix" ui-view></div>
+    </uib-tab>
+    <uib-tab heading="Riders"  active="true" >Riders</uib-tab>
 
 </uib-tabset>
 
