@@ -2,7 +2,7 @@
 
 const meters_miles_const = 1609.34;
 
-var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'firebase']);
+var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'ui.bootstrap', 'firebase']);
 
 carpoolApp.constant("FIREBASE_URI", "https://uwcarpool.firebaseio.com/");
 

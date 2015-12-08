@@ -21,6 +21,7 @@
   "homepage": "https://github.com/luisnaranjo733/i343-group-final#readme",
   "dependencies": {
     "angular": "^1.4.8",
+    "angular-animate": "^1.4.8",
     "angular-ui-router": "^0.2.15",
     "angular-ui-validate": "^1.2.2",
     "angularfire": "^1.1.3",
