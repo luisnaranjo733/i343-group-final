@@ -3,14 +3,9 @@
 
 
 <uib-tabset justified="true ">
-    <!-- toggleDriverView() is a function on homeController $scope-->
-    <uib-tab heading="Drivers" active="true" select="toggleDriverView()">
-        
-    </uib-tab>
-    <!-- toggleRiderView() is a function on homeController $scope-->
-    <uib-tab heading="Riders" select="toggleRiderView()" >
-        
-    </uib-tab>
+    <uib-tab heading="Riders" select="toggleRiderView()" ></uib-tab>
+    <uib-tab heading="Drivers" active="true" select="toggleDriverView()"></uib-tab>
+    
 </uib-tabset>
 
 <div class="clearfix" ui-view></div>
