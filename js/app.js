@@ -87,6 +87,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
                 setTime: timeStamp,
                 expire: expire
             }
+            console.log(cookie);
             var cookieString = JSON.stringify(cookie);
             localStorage.setItem('whirlpoolAuthCookie', cookieString);
         },
@@ -129,7 +130,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             }
         } else {
             // console.log($state.current.name);
-            if($state.current.name == "Login" || $state.current.name == "Signup") {
+            if($state.current.name == "Login" || $state.current.name == "Signup" || $state.current.name == null) {
 
             } else {
                 console.log("Access Denied");
@@ -210,6 +211,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 }
 
                 userService.addUser(user);
+                $state.go("Login");
             }
         });
     }
@@ -269,12 +271,12 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 
 
 
-    // var slider = new Slider('#ex1', {
-    //     formatter: function(value) {
-    //         return 'Pick up zone radius: ' + value;
-    //     },
-    //     tooltip: 'always'
-    // });
+    var slider = new Slider('#ex1', {
+        formatter: function(value) {
+            return 'Pick up zone radius: ' + value;
+        },
+        tooltip: 'always'
+    });
     // slider.disable();
 
     var ref = new Firebase(FIREBASE_URI);
@@ -309,7 +311,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             } else {
                 layer.setOpacity(0.6);
             }
-        })    
+        })
     }
 
 
@@ -321,7 +323,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             // radius in miles
             // attach to angular model
             // and html input element
-            
+
             if (user.pickUpRadius) {
                 $scope.pickUpRadius = user.pickUpRadius;
             } else {
@@ -349,7 +351,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 });
                 rider_markers.addTo(map)
                 filter_markers(circle)
-                
+
             });
 
 
@@ -365,7 +367,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 map.on('mousemove', function(mousemove_event) {
                     circle.setLatLng(mousemove_event.latlng);
 
-         
+
                     // highlights markers within radius of circle
                     // dims all others
                     filter_markers(circle);
@@ -381,7 +383,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             })
         });
     }
-    
+
 }])
 .controller('ridersController', ['$scope', '$state', function($scope, $state) {
 
