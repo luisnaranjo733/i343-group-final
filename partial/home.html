@@ -12,14 +12,99 @@
         </div>
         <div class="tab-pane fade" id="Rider">
         	<h1>Rider</h1>
-        	<h2>Current Pick-Up Times</h2>
-        	<ul>
-        		<li>Monday, 7:00 AM</li>
-        		<li>Tuesday, 9:00 AM</li>
-        		<li>Wednesday, 7:00 AM</li>
-        		<li>Thursday, 10:00 AM</li>
-        		<li>Friday, 7:00 AM</li>
-        	</ul>
+            <!-- Show if not editing -->
+            <span ng-show="!editSchedule">
+                <button type="button" class="btn btn-info right"  ng-click="editSchedule = editSchedule === false ? true: false"><i class="fa fa-cog"></i>  Edit Schedule</button>
+                <h2>Current Pick-Up Times</h2>
+                <p> There should be a user here: {{user.name}} <p>
+            	<table class="table">
+                    <tr>
+                        <th>Monday</th> 
+                        <th>Tuesday</th> 
+                        <th>Wednesday</th> 
+                        <th>Thursday</th> 
+                        <th>Friday</th>
+                    </tr>
+                    <tr>
+                        <td>{{(user.riderTimes.MonAM - user.riderTimes.MonAM % 100)/100}}:{{user.riderTimes.MonAM % 100}} AM</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                </table>
+            </span>
+            <!-- Show if editing -->
+            <span ng-show="editSchedule"> 
+                <p ng-show="user.scheduled = false">***Looks like we don't have a schedule on file for you. If you are a Driver, please click above to return to the Driver tab. If you are looking for a carpool, please fill out your schedule below.***</p>
+                <h2>Schedule Pick-Up Times</h2>
+                <p>Please make a selection from the drop down lists with your prefered departure time to and from school. If you do not require a ride on a day, please select None.</p>
+                <table class="table">
+                    <tr>
+                        <th>Time</th> 
+                        <th>Monday</th> 
+                        <th>Tuesday</th> 
+                        <th>Wednesday</th> 
+                        <th>Thursday</th> 
+                        <th>Friday</th>
+                    </tr>
+                    <tr>
+                        <td>AM</td>
+                        <td><select ng-model="MonAM" name="MonAM" id="MonAM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in AM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="TuesAM" name="TuesAM" id="TuesAM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in AM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="WedAM" name="WedAM" id="WedAM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in AM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="ThursAM" name="ThursAM" id="ThursAM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in AM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="FriAM" name="FriAM" id="FriAM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in AM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>PM</td>
+                        <td><select ng-model="MonPM" name="MonPM" id="MonPM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="TuesPM" name="TuesPM" id="TuesPM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="WedPM" name="WedPM" id="WedPM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="ThursPM" name="ThursPM" id="ThursPM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                        <td><select ng-model="FriPM" name="FriPM" id="FriPM">
+                            <option value="" selected>None</option>
+                            <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
+                        </select></td>
+                    </tr>
+                </table>
+                <button type="submit" class="btn btn-primary" ng-click="updateSchedule()">Update Schedule</button>
+            </span>
         </div>
         <div class="tab-pane fade" id="Driver">
         	<h1>Driver</h1>
@@ -60,6 +145,6 @@
         </div>
     </div>
 </div>
-<h1>Welcome {{currentUser.name}}!</h1>
+<h1>Welcome {{user.name}}!</h1>
 <button class="btn btn-primary" ng-click="logout()">Logout</button>
 
