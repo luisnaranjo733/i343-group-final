@@ -300,15 +300,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         })    
     }
 
-    $http.get('data/marker_coordinates.json').then(function(response) {
-        response.data.forEach(function(coordinate) {
-            var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
-            marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-            marker.addTo(rider_markers);
-        });
-        rider_markers.addTo(map)
-        
-    });
+
     var authData = $scope.authObj.$getAuth();
     if (authData) {
         var user = userService.getUser(authData.uid).$loaded(function(user) {
@@ -319,10 +311,8 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             // and html input element
             
             if (user.pickUpRadius) {
-                console.log('retrieved pick up radius from auth');
                 $scope.pickUpRadius = user.pickUpRadius;
             } else {
-                console.log('initializing pick up radius');
                 user.pickUpRadius = 2;
                 user.$save();
                 $scope.pickUpRadius = user.pickUpRadius;
@@ -337,7 +327,19 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
-            filter_markers(circle);
+
+            $http.get('data/marker_coordinates.json').then(function(response) {
+                response.data.forEach(function(coordinate) {
+                    var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
+                    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+                    marker.addTo(rider_markers);
+                });
+                rider_markers.addTo(map)
+                filter_markers(circle)
+                
+            });
+
+
             $scope.update_radius = function() {
                 circle.setRadius($scope.pickUpRadius * meters_miles_const);
                 filter_markers(circle);
