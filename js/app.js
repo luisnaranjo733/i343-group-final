@@ -277,7 +277,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         },
         tooltip: 'always'
     });
-    // slider.disable();
+    slider.disable();
 
     var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
@@ -332,13 +332,13 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 $scope.pickUpRadius = user.pickUpRadius;
             }
 
-            // slider.setValue($scope.pickUpRadius)
-            // slider.enable();
+            slider.setValue($scope.pickUpRadius)
+            slider.enable();
 
-            // slider.on('slide', function(value) {
-            //     $scope.pickUpRadius = value;
-            //     $scope.update_radius();
-            // });
+            slider.on('slide', function(value) {
+                $scope.pickUpRadius = value;
+                $scope.update_radius();
+            });
 
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
