@@ -1,24 +1,16 @@
 <h1>Welcome {{currentUser.name}}!</h1>
 <button class="btn btn-primary" ng-click="logout()">Logout</button>
 
-<br><br><br>
-<!-- <input type='number' ng-model="pickUpRadius" ng-change="update_radius()"></input>
 
- -->
-<input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.2" data-slider-value="0"
-ng-model="pickUpRadius" ng-change="update_radius()" />
-
-<br><br><br>
-
-<uib-tabset>
-    <uib-tab heading="Drivers" select="drivers()">
-        Drivers tab
-        <div class="clearfix" ui-view></div>
+<uib-tabset justified="true ">
+    <!-- toggleDriverView() is a function on homeController $scope-->
+    <uib-tab heading="Drivers" active="true" select="toggleDriverView()">
+        
     </uib-tab>
-    <uib-tab heading="Riders"  active="true" >Riders</uib-tab>
-
+    <!-- toggleRiderView() is a function on homeController $scope-->
+    <uib-tab heading="Riders" select="toggleRiderView()" >
+        
+    </uib-tab>
 </uib-tabset>
 
-<br><br><br>
-
-<div id="map"></div>
+<div class="clearfix" ui-view></div>
