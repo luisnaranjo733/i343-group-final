@@ -140,7 +140,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         }
     });
 })
-.controller('signupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', function($scope, $firebaseObject, userService, FIREBASE_URI) {
+.controller('signupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', '$state', function($scope, $firebaseObject, userService, FIREBASE_URI, $state) {
 
 
 
@@ -362,19 +362,30 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             // find users looking for a rider
             // add them to the map
             users.$loaded().then(function(user){
-                user.forEach(function(user, id) {
-                    var riderTimes = user.riderTimes;
-                    // if riderTimes defined
-                    // this is a rider who is 
-                    // requesting a driver
-                    if (riderTimes) {
-                        var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
-                        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-                        marker.addTo(rider_markers);
-                    }
-                });
-                rider_markers.addTo(map);
-                filter_markers(circle);
+                $http.get('partial/mustache/driver_marker.html').then(function(response) {
+                    var template = response.data;
+
+                    user.forEach(function(user, id) {
+                        var riderTimes = user.riderTimes;
+                        // if riderTimes defined
+                        // this is a rider who is 
+                        // requesting a driver
+                        if (riderTimes) {
+                            var template_scope = {
+                                user: user
+                            };
+                            console.log(JSON.stringify(user.riderTimes.MonAM))
+                            var output = Mustache.render(template, template_scope);
+                            var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
+                            marker.bindPopup(output).openPopup();
+                            marker.addTo(rider_markers);
+                        }
+                    });
+                    rider_markers.addTo(map);
+                    filter_markers(circle);
+
+                })
+
             });
 
 
