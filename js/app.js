@@ -259,7 +259,6 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 .controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
     $scope.toggleDriverView = function() {
-        console.log('switching to driver state')
         $state.go('Home.Drivers')
     }
 
@@ -377,7 +376,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                             var template_scope = {
                                 user: user
                             };
-                            console.log(JSON.stringify(user.riderTimes.MonAM))
+                            // console.log(JSON.stringify(user.riderTimes.MonAM))
                             var output = Mustache.render(template, template_scope);
                             var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
                             marker.bindPopup(output).openPopup();
@@ -413,11 +412,18 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             });
 
             // remove event listener when mouse is removed
-            map.on('mouseup', function(e) {
+            map.on('mouseup', function(mousemove_event) {
                 map.removeEventListener('mousemove');
-                user.lat = e.latlng.lat;
-                user.lng = e.latlng.lng;
-                user.$save();
+
+                // in miles
+                var miles_away = mousemove_event.latlng.distanceTo(circle.getLatLng()) / meters_miles_const;
+
+                if (miles_away < circle.getRadius() / meters_miles_const) {
+                    console.log('Updating user home coordinate')
+                    user.lat = mousemove_event.latlng.lat;
+                    user.lng = mousemove_event.latlng.lng;
+                    user.$save();
+                }
             })
         });
     }
