@@ -344,16 +344,39 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
 
-            $http.get('data/marker_coordinates.json').then(function(response) {
-                response.data.forEach(function(coordinate) {
-                    var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
-                    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-                    marker.addTo(rider_markers);
-                });
-                rider_markers.addTo(map)
-                filter_markers(circle)
+            // load made up markers for development
+            // $http.get('data/marker_coordinates.json').then(function(response) {
+            //     response.data.forEach(function(coordinate) {
+            //         var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
+            //         marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+            //         marker.addTo(rider_markers);
+            //     });
+            //     rider_markers.addTo(map)
+            //     filter_markers(circle)
 
+            // });
+
+
+            var users = userService.getUsers();
+
+            // find users looking for a rider
+            // add them to the map
+            users.$loaded().then(function(user){
+                user.forEach(function(user, id) {
+                    var riderTimes = user.riderTimes;
+                    // if riderTimes defined
+                    // this is a rider who is 
+                    // requesting a driver
+                    if (riderTimes) {
+                        var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
+                        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+                        marker.addTo(rider_markers);
+                    }
+                });
+                rider_markers.addTo(map);
+                filter_markers(circle);
             });
+
 
 
             $scope.update_radius = function() {
