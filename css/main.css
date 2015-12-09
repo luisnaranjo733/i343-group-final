@@ -19,3 +19,22 @@
 .right {
 	float: right;
 }
+
+.centertext {
+	text-align: center;
+}
+
+/* Media query, instructions for large screens */
+@media screen and (min-width: 768px){
+	header {
+		background-image: url(../img/quad.jpg);
+		background-repeat: no-repeat;
+		background-size: 100%;
+		color: #400040;
+		min-height: 400px;
+		margin-top: 0;
+		top: 0px;
+		width: auto;
+		border-bottom: 3px solid;
+		border-bottom-color: #e5c100;
+	}

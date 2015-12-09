@@ -4,7 +4,7 @@
 <span ng-show="!editSchedule">
     <button type="button" class="btn btn-info right"  ng-click="editSchedule = editSchedule === false ? true: false"><i class="fa fa-cog"></i>  Edit Schedule</button>
     <h2>Current Pick-Up Times</h2>
-    <p> There should be a user here: {{user.name}} <p>
+    <p> Showing Schedule for: {{user.name}} <p>
    	<table class="table">
         <tr>
             <th>Monday</th> 
@@ -14,18 +14,18 @@
             <th>Friday</th>
         </tr>
         <tr>
-            <td>{{(user.riderTimes.MonAM - user.riderTimes.MonAM % 100)/100}}:{{user.riderTimes.MonAM % 100}} AM</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{(user.riderTimes.MonAM.time - user.riderTimes.MonAM.time % 100)/100}}:{{user.riderTimes.MonAM.time % 100}} AM <br>Driver: {{user.riderTimes.MonAM.driver}}</td>
+            <td>{{(user.riderTimes.TuesAM.time - user.riderTimes.TuesAM.time % 100)/100}}:{{user.riderTimes.TuesAM.time % 100}} AM</td>
+            <td>{{(user.riderTimes.WedAM.time - user.riderTimes.WedAM.time % 100)/100}}:{{user.riderTimes.WedAM.time % 100}} AM</td>
+            <td>{{(user.riderTimes.ThursAM.time - user.riderTimes.ThursAM.time % 100)/100}}:{{user.riderTimes.ThursAM.time % 100}} AM</td>
+            <td>{{(user.riderTimes.FriAM.time - user.riderTimes.FriAM.time % 100)/100}}:{{user.riderTimes.FriAM.time % 100}} AM</td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{((user.riderTimes.MonPM.time - 1200) - user.riderTimes.MonPM.time % 100)/100}}:{{user.riderTimes.MonPM.time % 100}} PM</td>
+            <td>{{((user.riderTimes.TuesPM.time - 1200) - user.riderTimes.TuesPM.time % 100)/100}}:{{user.riderTimes.TuesPM.time % 100}} PM</td>
+            <td>{{((user.riderTimes.WedPM.time - 1200) - user.riderTimes.WedPM.time % 100)/100}}:{{user.riderTimes.WedPM.time % 100}} PM</td>
+            <td>{{((user.riderTimes.ThursPM.time - 1200) - user.riderTimes.ThursPM.time % 100)/100}}:{{user.riderTimes.ThursPM.time % 100}} PM</td>
+            <td>{{((user.riderTimes.FriPM.time - 1200) - user.riderTimes.FriPM.time % 100)/100}}:{{user.riderTimes.FriPM.time % 100}} PM</td>
         </tr>
     </table>
 </span>

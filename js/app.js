@@ -443,16 +443,36 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             $scope.editSchedule = $scope.editSchedule === false ? true: false;
             user.scheduled = true;
             user.riderTimes = {
-                MonAM: parseInt(MonAM.value),
-                TuesAM: parseInt(TuesAM.value),
-                WedAM: parseInt(WedAM.value),
-                ThursAM: parseInt(ThursAM.value),
-                FriAM: parseInt(FriAM.value),
-                MonPM: parseInt(MonPM.value),
-                TuesPM: parseInt(TuesPM.value),
-                WedPM: parseInt(WedPM.value),
-                ThursPM: parseInt(ThursPM.value),
-                FriPM: parseInt(FriPM.value)
+                MonAM: {
+                    time: parseInt(MonAM.value)
+                },
+                TuesAM: {
+                    time: parseInt(TuesAM.value)
+                },
+                WedAM: {
+                    time: parseInt(WedAM.value)
+                },
+                ThursAM: {
+                    time: parseInt(ThursAM.value)
+                },
+                FriAM: {
+                    time: parseInt(FriAM.value)
+                },
+                MonPM: {
+                    time: parseInt(MonPM.value)
+                },
+                TuesPM: {
+                    time: parseInt(TuesPM.value)
+                },
+                WedPM: {
+                    time: parseInt(WedPM.value)
+                },
+                ThursPM: {
+                    time: parseInt(ThursPM.value)
+                },
+                FriPM: {
+                    time: parseInt(FriPM.value)
+                }
             }
             user.$save();
         });
