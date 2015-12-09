@@ -2,7 +2,7 @@
 
 const meters_miles_const = 1609.34;
 
-var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'firebase']);
+var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'ui.bootstrap', 'firebase']);
 
 carpoolApp.constant("FIREBASE_URI", "https://uwcarpool.firebaseio.com/");
 
@@ -87,6 +87,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
                 setTime: timeStamp,
                 expire: expire
             }
+            console.log(cookie);
             var cookieString = JSON.stringify(cookie);
             localStorage.setItem('whirlpoolAuthCookie', cookieString);
         },
@@ -129,7 +130,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             }
         } else {
             // console.log($state.current.name);
-            if($state.current.name == "Login" || $state.current.name == "Signup") {
+            if($state.current.name == "Login" || $state.current.name == "Signup" || $state.current.name == null) {
 
             } else {
                 console.log("Access Denied");
@@ -207,11 +208,11 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                     phone : $scope.signup.phone,
                     lat : $scope.signup.lat,
                     lng : $scope.signup.lng,
-                    scheduled: false,
-                    riderTimes: {}
+                    scheduled: false
                 }
 
                 userService.addUser(user);
+                $state.go("Login");
             }
         });
     }
@@ -255,15 +256,29 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         });
     }
 }])
-.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth){
+.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
-    var slider = $('#ex1').slider({
+    $scope.toggleDriverView = function() {
+        console.log('switching to driver state')
+        $state.go('Home.Drivers')
+    }
+
+    $scope.toggleRiderView = function() {
+        $state.go('Home.Riders')
+    }
+
+}])
+.controller('driversController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+
+
+
+    var slider = new Slider('#ex1', {
         formatter: function(value) {
             return 'Pick up zone radius: ' + value;
         },
         tooltip: 'always'
     });
-    slider.slider('disable');
+    slider.disable();
 
     var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
@@ -297,18 +312,10 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             } else {
                 layer.setOpacity(0.6);
             }
-        })    
+        })
     }
 
-    $http.get('data/marker_coordinates.json').then(function(response) {
-        response.data.forEach(function(coordinate) {
-            var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
-            marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-            marker.addTo(rider_markers);
-        });
-        rider_markers.addTo(map)
-        
-    });
+
     var authData = $scope.authObj.$getAuth();
     if (authData) {
         var user = userService.getUser(authData.uid).$loaded(function(user) {
@@ -317,27 +324,38 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             // radius in miles
             // attach to angular model
             // and html input element
-            
+
             if (user.pickUpRadius) {
-                console.log('retrieved pick up radius from auth');
                 $scope.pickUpRadius = user.pickUpRadius;
             } else {
-                console.log('initializing pick up radius');
                 user.pickUpRadius = 2;
                 user.$save();
                 $scope.pickUpRadius = user.pickUpRadius;
             }
-            slider.slider('setValue', $scope.pickUpRadius)
-            slider.slider('enable');
 
-            slider.on('slide', function(slideEvent) {
-                $scope.pickUpRadius = slideEvent.value;
+            slider.setValue($scope.pickUpRadius)
+            slider.enable();
+
+            slider.on('slide', function(value) {
+                $scope.pickUpRadius = value;
                 $scope.update_radius();
             });
 
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
-            filter_markers(circle);
+
+            $http.get('data/marker_coordinates.json').then(function(response) {
+                response.data.forEach(function(coordinate) {
+                    var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
+                    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+                    marker.addTo(rider_markers);
+                });
+                rider_markers.addTo(map)
+                filter_markers(circle)
+
+            });
+
+
             $scope.update_radius = function() {
                 circle.setRadius($scope.pickUpRadius * meters_miles_const);
                 filter_markers(circle);
@@ -350,7 +368,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 map.on('mousemove', function(mousemove_event) {
                     circle.setLatLng(mousemove_event.latlng);
 
-         
+
                     // highlights markers within radius of circle
                     // dims all others
                     filter_markers(circle);
@@ -365,12 +383,12 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 user.$save();
             })
         });
-
-    
-
     }
-
-    /* Rider Scheduling Area */
+}])
+.controller('ridersController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state) {
+    var ref = new Firebase(FIREBASE_URI);
+    $scope.authObj = $firebaseAuth(ref);
+    var authData = $scope.authObj.$getAuth();
     var user = userService.getUser(authData.uid).$loaded(function(user) {
         $scope.user = user;
         $scope.editSchedule = !user.scheduled;
@@ -399,6 +417,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
 }]);
 
 
+
 carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise("/login");
@@ -425,5 +444,15 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
         url: "/",
         templateUrl: "partial/home.html",
         controller: "homeController"
+    })
+    .state('Home.Drivers', {
+        url: "drivers",
+        templateUrl: "partial/drivers.html",
+        controller: "driversController"
+    })
+    .state('Home.Riders', {
+        url: "riders",
+        templateUrl: "partial/riders.html",
+        controller: "ridersController"
     })
 });
