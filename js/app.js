@@ -283,7 +283,8 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
     var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
 
-    var map = L.map('map').setView([47.745169, -122.288939], 11);
+    var map_center = [47.745169, -122.288939];
+    var map = L.map('map').setView(map_center, 11);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 18,
@@ -319,7 +320,9 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
     var authData = $scope.authObj.$getAuth();
     if (authData) {
         var user = userService.getUser(authData.uid).$loaded(function(user) {
-
+            if (user.lat && user.lng) {
+                map.setView([user.lat, user.lng], 13);
+            }
 
             // radius in miles
             // attach to angular model
