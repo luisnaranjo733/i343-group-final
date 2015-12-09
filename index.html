@@ -40,7 +40,12 @@
 
 </head>
 <body ng-app="carpoolApp">
+<nav ng-controller="carpoolCtrl">
+    <button class="btn btn-primary logout-btn btn-xs right" ng-click="logout()">Logout</button>
+    <p class="righttext">Welcome {{currentUser.name}}!</p>
+</nav>
 <header>
+    <br>
     <h1 class="centertext">Whirlpool</h1>
 </header>
     <div class="container" ng-controller="carpoolCtrl">
