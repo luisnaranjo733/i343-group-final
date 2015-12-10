@@ -281,6 +281,66 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
 
 
+    //LIAM WORK
+    //
+    //
+    $scope.createCar = function() {
+        console.log($scope.car);
+        $rootScope.currentUser.car = $scope.car;
+        $rootScope.currentUser.$save();
+    }
+
+    $rootScope.addUserToCar = function(user, time) {
+        console.log("fired");
+        switch (time) {
+            case "MonAM":
+                user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
+            break;
+            case "MonPM":
+                user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
+            break;
+            case "TuesAM":
+                user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
+            break;
+            case "TuesPM":
+                user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
+            break;
+            case "WedAM":
+                user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
+            break;
+            case "WedPM":
+                user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
+            break;
+            case "ThursAM":
+                user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
+            break;
+            case "ThursPM":
+                user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
+            break;
+            case "FriAM":
+                user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
+            break;
+            case "FriPM":
+                user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
+            break;
+        }
+        if ($rootScope.currentUser.car.riders) {
+            $rootScope.currentUser.car.riders.push(user.$id);
+        } else {
+            console.log("creating new riders array");
+            $rootScope.currentUser.car.riders = [user.$id];
+        }
+        $rootScope.currentUser.$save();
+        user.$save();
+
+    }
+
+
+
+
+
+
+
     var slider = new Slider('#ex1', {
         formatter: function(value) {
             return 'Pick up zone radius: ' + value;
