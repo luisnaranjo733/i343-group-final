@@ -182,18 +182,6 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         console.log(exists);
     });
 
-    // var ref = new Firebase("https://uwcarpool.firebaseio.com/data");
-    // userService.getUsers().$bindTo($scope, 'users');
-    // console.log($scope.users);
-    var testUser = {
-        uid: "oasjndoass",
-        email: "test@email.com",
-        name: "Liams test",
-        phone: 2038325223,
-        lat: -122,
-        lng: 84
-    }
-
     //creates the firebase auth user and then attaches the uid to the user object. inserts the user object into users
     $scope.signupUser = function() {
 
@@ -297,42 +285,327 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
             switch (time) {
                 case "MonAM":
-                    user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
+                    if(!user.riderTimes.MonAM.driver) {
+                        user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.MonAM) {
+                            if($rootScope.currentUser.car.riders.MonAM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.MonAM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.MonAM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.MonAM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "MonAM": [user.$id]
+                        }
+                    }
                 break;
                 case "MonPM":
+                    if(!user.riderTimes.MonPM.driver) {
+                        user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.MonPM) {
+                            if($rootScope.currentUser.car.riders.MonPM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.MonPM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.MonPM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.MonPM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "MonPM": [user.$id]
+                        }
+                    }
                 break;
                 case "TuesAM":
+                    if(!user.riderTimes.TuesAM.driver) {
+                        user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.TuesAM) {
+                            if($rootScope.currentUser.car.riders.TuesAM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.TuesAM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.TuesAM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.TuesAM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "TuesAM": [user.$id]
+                        }
+                    }
                 break;
                 case "TuesPM":
+                    if(!user.riderTimes.TuesPM.driver) {
+                        user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.TuesPM) {
+                            if($rootScope.currentUser.car.riders.TuesPM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.TuesPM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.TuesPM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.TuesPM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "TuesPM": [user.$id]
+                        }
+                    }
                 break;
                 case "WedAM":
+                    if(!user.riderTimes.WedAM.driver) {
+                        user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.WedAM) {
+                            if($rootScope.currentUser.car.riders.WedAM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.WedAM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.WedAM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.WedAM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "WedAM": [user.$id]
+                        }
+                    }
                 break;
                 case "WedPM":
+                    if(!user.riderTimes.WedPM.driver) {
+                        user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.WedPM) {
+                            if($rootScope.currentUser.car.riders.WedPM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.WedPM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.WedPM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.WedPM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "WedPM": [user.$id]
+                        }
+                    }
                 break;
                 case "ThursAM":
+                    if(!user.riderTimes.ThursAM.driver) {
+                        user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.ThursAM) {
+                            if($rootScope.currentUser.car.riders.ThursAM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.ThursAM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.ThursAM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.ThursAM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "ThursAM": [user.$id]
+                        }
+                    }
                 break;
                 case "ThursPM":
+                    if(!user.riderTimes.ThursPM.driver) {
+                        user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.ThursPM) {
+                            if($rootScope.currentUser.car.riders.ThursPM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.ThursPM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.ThursPM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.ThursPM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "ThursPM": [user.$id]
+                        }
+                    }
                 break;
                 case "FriAM":
+                    if(!user.riderTimes.FriAM.driver) {
+                        user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.FriAM) {
+                            if($rootScope.currentUser.car.riders.FriAM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.FriAM.indexOf(user.$id) > -1) {
+                                $rootScope.currentUser.car.riders.FriAM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.FriAM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "FriAM": [user.$id]
+                        }
+                    }
                 break;
                 case "FriPM":
+                    if(!user.riderTimes.FriPM.driver) {
+                        user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
+                    } else {
+                        console.log("already has driver");
+                        return;
+                    }
+
                     user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
+                    if ($rootScope.currentUser.car.riders) {
+                        if($rootScope.currentUser.car.riders.FriPM) {
+                            if($rootScope.currentUser.car.riders.FriPM.length >= $rootScope.currentUser.car.seats){
+                                console.log("car is Full");
+                                return;
+                            }
+
+                            if($rootScope.currentUser.car.riders.FriPM.indexOf(user.$id) > -1) {
+                                console.log($rootScope.currentUser.car.riders.FriPM.indexOf(user.$id));
+                                $rootScope.currentUser.car.riders.FriPM.push(user.$id);
+                            } else {
+                                console.log("already in the car");
+                                return;
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders.FriPM = [user.$id];
+                        }
+                    } else {
+                        console.log("creating new riders array");
+                        $rootScope.currentUser.car.riders = {
+                            "FriPM": [user.$id]
+                        }
+                    }
                 break;
             }
-            if ($rootScope.currentUser.car.riders) {
-                $rootScope.currentUser.car.riders.push(user.$id);
-            } else {
-                console.log("creating new riders array");
-                $rootScope.currentUser.car.riders = [user.$id];
-            }
+
             $rootScope.currentUser.$save();
             user.$save();
         });
