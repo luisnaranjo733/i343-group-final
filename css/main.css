@@ -55,6 +55,45 @@ nav {
     margin-left: 10px;
 }
 
+#drivers h6 {
+	margin:5px 0px;
+}
+
+#createCar {
+	padding:50px 0px;
+}
+
+.spinner,
+.spinner:before,
+.spinner:after {
+  border-radius: 50%;
+}
+.spinner:before,
+.spinner:after {
+  position: absolute;
+  content: '';
+}
+.spinner:before {
+  width: 5.2em;
+  height: 10.2em;
+  background: #0dc5c1;
+  border-radius: 10.2em 0 0 10.2em;
+  top: -0.1em;
+  left: -0.1em;
+  -webkit-transform-origin: 5.2em 5.1em;
+  transform-origin: 5.2em 5.1em;
+  -webkit-animation: load2 2s infinite ease 1.5s;
+  animation: load2 2s infinite ease 1.5s;
+}
+.spinner {
+  font-size: 11px;
+  text-indent: -99999em;
+  margin: 55px auto;
+  position: relative;
+  width: 10em;
+  height: 10em;
+}
+
 /* Media query, instructions for large screens */
 @media screen and (min-width: 768px){
 	header {
@@ -71,3 +110,4 @@ nav {
 		border-bottom-color: #e5c100;
 		margin-bottom: 2em;
 	}
+}

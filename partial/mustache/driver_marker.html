@@ -1,29 +1,30 @@
 <h2>{{ user.name }}</h2>
 <p>{{ user.email }}</p>
 <p>{{ user.phone }}</p>
-
+{{$root}}
 <div class="table-responsive">
     <table class="table">
         <tr>
-            <th>Monday</th> 
-            <th>Tuesday</th> 
-            <th>Wednesday</th> 
-            <th>Thursday</th> 
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
             <th>Friday</th>
         </tr>
         <tr>
-            <td>{{ user.riderTimes.MonAM.time }}</td>
-            <td>{{ user.riderTimes.TuesAM.time }}</td>
-            <td>{{ user.riderTimes.WedAM.time }}</td>
-            <td>{{ user.riderTimes.ThursAM.time }}</td>
-            <td>{{ user.riderTimes.FriAM.time }}</td>
+
+            <td>{{ user.riderTimes.MonAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'MonAM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.TuesAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'TuesAM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.WedAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'WedAM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.ThursAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'ThursAM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.FriAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'FriAM')"><i class="fa fa-plus"></i></button></td>
         </tr>
         <tr>
-            <td>{{ user.riderTimes.MonPM.time }}</td>
-            <td>{{ user.riderTimes.TuesPM.time }}</td>
-            <td>{{ user.riderTimes.WedPM.time }}</td>
-            <td>{{ user.riderTimes.ThursPM.time }}</td>
-            <td>{{ user.riderTimes.FriPM.time }}</td>
+            <td>{{ user.riderTimes.MonPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'MonPM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.TuesPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'TuesPM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.WedPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'WedPM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.ThursPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'ThursPM')"><i class="fa fa-plus"></i></button></td>
+            <td>{{ user.riderTimes.FriPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar(user, 'FriPM')"><i class="fa fa-plus"></i></button></td>
         </tr>
     </table>
 </div>
