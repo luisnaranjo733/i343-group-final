@@ -49,12 +49,20 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Number of Riders:</td>
-                        <td>1</td>
-                        <td>3</td>
-                        <td>2</td>
-                        <td>1</td>
-                        <td>4</td>
+                        <td>Number of AM Riders:</td>
+                        <td>{{ $root.currentUser.car.riders.MonAM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.TuesAM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.WedAM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.ThursAM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.FriAM.length || 0 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Number of PM Riders:</td>
+                        <td>{{ $root.currentUser.car.riders.MonPM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.TuesPM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.WedPM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.ThursPM.length || 0 }}</td>
+                        <td>{{ $root.currentUser.car.riders.FriPM.length || 0 }}</td>
                     </tr>
                 </tbody>
             </table>
