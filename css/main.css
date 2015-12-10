@@ -55,6 +55,14 @@ nav {
     margin-left: 10px;
 }
 
+#drivers h6 {
+	margin:5px 0px;
+}
+
+#createCar {
+	padding:50px 0px;
+}
+
 /* Media query, instructions for large screens */
 @media screen and (min-width: 768px){
 	header {
