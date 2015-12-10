@@ -1,6 +1,15 @@
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css);
 /* Import FontAwesome */
 
+#whirlpool {
+	font-size: 4em;
+	font-style: italic;
+	text-shadow: 2px 3px lightblue;
+}
+
+#description {
+	font-size: 1.3em;
+}
 .center {
     float:none;
     margin:0 auto;
@@ -10,7 +19,21 @@
     margin:10px 0px;
 }
 
-#map { height: 500px; }
+#tabSelect {
+	font-size: 1.5em;
+}
+
+#map { 
+	height: 500px; 
+}
+
+#pickupTable {
+	margin: 30px;
+}
+
+#ex1Slider{
+	margin-top: 30px;
+}
 
 #ex1Slider .slider-selection {
     background: #BABABA;

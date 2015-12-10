@@ -735,8 +735,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                             marker.addTo(rider_markers);
 
                             marker.on('click', function(e){
-                            //var authData = $scope.authObj.$getAuth();
-                            //find out how to get id
+                            
                                 $scope.$apply(function(){
                                     $rootScope.modalUser = e.target.user;
                                     console.log($scope.modalUser);
