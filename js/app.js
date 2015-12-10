@@ -44,6 +44,12 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
         removeUser: function(id) {
             users.$remove(id);
         },
+        getCurrent: function () {
+            var cookieString = localStorage.getItem('whirlpoolAuthCookie');
+            var cookie = JSON.parse(cookieString);
+            var userRef = new Firebase(FIREBASE_URI + 'users/' + cookie.uid);
+            return $firebaseObject(userRef);
+        }
     };
     return obj
 })
@@ -99,7 +105,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
 
 
-carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, authService, $state) {
+carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $firebaseObject, authService, userService, $state) {
 
     $scope.validUwEmail = function(value) {
         if (angular.isUndefined(value)) {
@@ -124,9 +130,10 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         if(authService.validate()) {
             if($state.current.name == "Login" || $state.current.name == "Signup") {
                 console.log("already validated");
+                $rootScope.currentUser = userService.getCurrent();
                 $state.go("Home");
             }else {
-
+                $rootScope.currentUser = userService.getCurrent();
             }
         } else {
             // console.log($state.current.name);
@@ -217,7 +224,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         });
     }
 }])
-.controller('loginController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$state', 'authService', function($scope, $firebaseObject, FIREBASE_URI, userService, $state, authService){
+.controller('loginController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$state', 'authService', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $state, authService){
     var ref = new Firebase(FIREBASE_URI);
 
     //logs in the user with firebase and then attaches their associated user object
@@ -240,8 +247,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                     if(user.uid == authData.uid) {
 
                         //three way binds the match to currentUser so it will persist around site
-                        userService.getUser(user.$id).$bindTo($scope, "currentUser");
-
+                        $rootScope.currentUser = userService.getUser(user.$id);
                         //adds the authorization cookie
                         authService.authorize(authData);
 
@@ -267,7 +273,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
     }
 
 }])
-.controller('driversController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
 
 
@@ -370,7 +376,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                     user.forEach(function(user, id) {
                         var riderTimes = user.riderTimes;
                         // if riderTimes defined
-                        // this is a rider who is 
+                        // this is a rider who is
                         // requesting a driver
                         if (riderTimes) {
                             var template_scope = {
@@ -436,7 +442,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         $scope.user = user;
         $scope.editSchedule = !user.scheduled;
         $scope.AM = {'6:30': 630, '6:45': 645, '7:00': 700, '7:15': 715, '7:30': 730, '7:45': 745, '8:00': 800, '8:15': 815, '8:30': 830, '8:45': 845, '9:00': 900, '9:15': 915, '9:30': 930, '9:45': 945, '10:00': 1000, '10:15': 1015, '10:30': 1030, '10:45': 1045, '11:00': 1100};
-        $scope.PM = {'12:00': 1200, '12:15': 1215, '12:30':1230 , '12:45': 1245, '1:00': 1300, '1:15': 1315, '1:30': 1330, '1:45': 1345, '2:00': 1400, '2:15': 1415, '2:30': 1430, '2:45': 1445, '3:00': 1500, '3:15': 1515, '3:30': 1530, '3:45': 1545, '4:00': 1600, '4:15': 1615, '4:30': 1630};  
+        $scope.PM = {'12:00': 1200, '12:15': 1215, '12:30':1230 , '12:45': 1245, '1:00': 1300, '1:15': 1315, '1:30': 1330, '1:45': 1345, '2:00': 1400, '2:15': 1415, '2:30': 1430, '2:45': 1445, '3:00': 1500, '3:15': 1515, '3:30': 1530, '3:45': 1545, '4:00': 1600, '4:15': 1615, '4:30': 1630};
     });
     $scope.updateSchedule = function () {
         var user = userService.getUser(authData.uid).$loaded(function(user) {
