@@ -121,7 +121,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
     $scope.logout = function() {
         authService.logout();
-        $rootScope.currentUser = null;
+        delete $rootScope.currentUser;
         $state.go("Login");
     }
 
