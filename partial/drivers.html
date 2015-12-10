@@ -1,38 +1,82 @@
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Day:</th>
-                <th>Monday</th>
-                <th>Tuesday</th>
-                <th>Wednesday</th>
-                <th>Thursday</th>
-                <th>Friday</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Number of Riders:</td>
-                <td>1</td>
-                <td>3</td>
-                <td>2</td>
-                <td>1</td>
-                <td>4</td>
-            </tr>
-        </tbody>
-    </table>
+<div id="drivers">
+    <div ng-hide="$root.currentUser.car" id="createCar">
+        <h3>Create your car</h3>
+        <form name="createCarForm" ng-submit="createCarForm.$valid && createCar()" novalidate>
+            <div class="form-group">
+                <label for="seats">Seats</label>
+                <h6>Not including driver seat</h6>
+                <div style="color:red" ng-show="createCarForm.$submitted && createCarForm.$dirty && createCarForm.$invalid">
+                  <div ng-show="createCarForm.seats.$error.required">Your car must have seats.</div>
+                </div>
+                <input type="number" value="1" name="seats" ng-model="car.seats" min="1" max="50" required>
+            </div>
+            <div class="form-group">
+                <label for="seats">Model</label>
+                <h6>eg. 2001 Honda Civic</h6>
+                <div style="color:red" ng-show="createCarForm.$submitted && createCarForm.$dirty && createCarForm.$invalid">
+                  <div ng-show="createCarForm.model.$error.required">Your car must have seats.</div>
+                  <div ng-show="createCarForm.model.$error.minlength && !createCarForm.model.$error.required">Your car must have a model.</div>
+                  <div ng-show="createCarForm.model.$error.maxlength && !createCarForm.model.$error.required">Your car model is too long</div>
+                </div>
+                <input type="text" value="" name="model" placeholder="Car model" ng-model="car.model" ng-minlength="10" ng-maxlength="120" required>
+            </div>
+            <div style="color:red" ng-show="createCarForm.$submitted && createCarForm.$dirty && createCarForm.$invalid">
+                  <div ng-show="createCarForm.desc.$error.required">Your car must have a description.</div>
+                </div>
+            <div class="form-group">
+                <label for="desc">Car Description</label>
+                <textarea class="form-control" name="desc" id="" cols="30" rows="4" ng-model="car.desc" required></textarea>
+            </div>
+            <input type="submit" class="btn btn-primary btn-block" value="Create"></input>
+        </form>
+    </div>
+    <div ng-show="$root.currentUser.car">
+        <h5><b>Your Car: </b>{{$root.currentUser.car.model}}</h5>
+        <p><b>Seats: </b>{{$root.currentUser.car.seats}}</p>
+        <p><b>Description: </b>{{$root.currentUser.car.desc}}</p>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Day:</th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Number of Riders:</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>4</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <input type='number' ng-model="pickUpRadius" ng-change="update_radius()"></input> -->
+
+        <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.2" data-slider-value="0"
+        ng-model="pickUpRadius" ng-change="update_radius()" />
+
+        <br><br><br>
+
+        <div id="map"></div>
+
+        <br><br><br>
+    </div>
+
 </div>
 
-<!-- <input type='number' ng-model="pickUpRadius" ng-change="update_radius()"></input> -->
 
-<input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.2" data-slider-value="0"
-ng-model="pickUpRadius" ng-change="update_radius()" />
 
-<br><br><br>
 
-<div id="map"></div>
-
-<br><br><br>
 <script type="text/ng-template" id="driverModal.html">
     <div class="modal-header">
         <h3 class="modal-title">I'm a modal!</h3>
