@@ -277,7 +277,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     }
 
 }])
-.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
 
 
@@ -322,6 +322,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             } else {
                 layer.setOpacity(0.6);
             }
+
         })
     }
 
@@ -391,8 +392,23 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                             var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
                             marker.bindPopup(output).openPopup();
                             marker.addTo(rider_markers);
-                        }
-                    });
+                            
+                            marker.on('click', function(e){
+                            //var authData = $scope.authObj.$getAuth();
+                            //find out how to get id
+                                $scope.$apply(function(){
+                                $scope.items = ['output'];
+                                    var modal = $uibModal.open({templateUrl: 'partial/mustache/driver_marker.html', 
+                                                scope: $scope,
+                                                resolve: {
+                                                    items: function () {
+                                                        return $scope.items;
+                                                }}
+                                            });
+            })
+                                    }
+                                )}
+                            });
                     rider_markers.addTo(map);
                     filter_markers(circle);
 
