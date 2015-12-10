@@ -33,3 +33,43 @@ ng-model="pickUpRadius" ng-change="update_radius()" />
 <div id="map"></div>
 
 <br><br><br>
+<script type="text/ng-template" id="driverModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">I'm a modal!</h3>
+    </div>
+    <div class="modal-body">
+        <h2>Name:{{ $root.modalUser.name }}</h2>
+        <p>Email:{{ $root.modalUser.email }}</p>
+        <p>Phone:{{ $root.modalUser.phone }}</p>
+
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                </tr>
+                <tr>
+                    <td>{{ $root.modalUser.riderTimes.MonAM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.TuesAM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.WedAM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.ThursAM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.FriAM.time }}</td>
+                </tr>
+                <tr>
+                    <td>{{ $root.modalUser.riderTimes.MonPM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.TuesPM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.WedPM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.ThursPM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.FriPM.time }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
