@@ -20,6 +20,8 @@
 
     <!-- include libraries -->
     <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/angular-animate/angular-animate.min.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="node_modules/firebase/lib/firebase-web.js"></script>
     <script src="node_modules/angularfire/dist/angularfire.js"></script>
     <script src="node_modules/angular-ui-router/build/angular-ui-router.min.js"></script>
@@ -27,24 +29,31 @@
 
     <script src="node_modules/leaflet/dist/leaflet.js"></script>
 
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/mustache/mustache.min.js"></script>
+
+
     <script src="node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+    <!-- This module is causing bugs -->
 
     <script src="js/app.js"></script>
 
 
 </head>
 <body ng-app="carpoolApp">
-    
+<nav ng-controller="carpoolCtrl">
+    <div ng-show="$root.currentUser">
+        <button class="btn btn-primary logout-btn btn-xs right" ng-click="logout()">Logout</button>
+        <p class="righttext">Welcome {{$root.currentUser.name}}!</p>
+    </div>
+</nav>
+<header>
+    <br>
+    <h1 class="centertext">Whirlpool</h1>
+</header>
     <div class="container" ng-controller="carpoolCtrl">
-        <h1>Whirlpool</h1>
         <div class="clearfix" ui-view></div>
     </div>
 
-
-
-<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
 </body>
 </html>

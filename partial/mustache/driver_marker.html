@@ -1,0 +1,29 @@
+<h2>{{ user.name }}</h2>
+<p>{{ user.email }}</p>
+<p>{{ user.phone }}</p>
+
+<div class="table-responsive">
+    <table class="table">
+        <tr>
+            <th>Monday</th> 
+            <th>Tuesday</th> 
+            <th>Wednesday</th> 
+            <th>Thursday</th> 
+            <th>Friday</th>
+        </tr>
+        <tr>
+            <td>{{ user.riderTimes.MonAM }}</td>
+            <td>{{ user.riderTimes.TuesAM }}</td>
+            <td>{{ user.riderTimes.WedAM }}</td>
+            <td>{{ user.riderTimes.ThursAM }}</td>
+            <td>{{ user.riderTimes.FriAM }}</td>
+        </tr>
+        <tr>
+            <td>{{ user.riderTimes.MonPM }}</td>
+            <td>{{ user.riderTimes.TuesPM }}</td>
+            <td>{{ user.riderTimes.WedPM }}</td>
+            <td>{{ user.riderTimes.ThursPM }}</td>
+            <td>{{ user.riderTimes.FriPM }}</td>
+        </tr>
+    </table>
+</div>

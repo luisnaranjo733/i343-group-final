@@ -2,7 +2,7 @@
 
 const meters_miles_const = 1609.34;
 
-var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'firebase']);
+var carpoolApp = angular.module('carpoolApp', ['ui.router', 'ui.validate', 'ui.bootstrap', 'firebase']);
 
 carpoolApp.constant("FIREBASE_URI", "https://uwcarpool.firebaseio.com/");
 
@@ -44,6 +44,12 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
         removeUser: function(id) {
             users.$remove(id);
         },
+        getCurrent: function () {
+            var cookieString = localStorage.getItem('whirlpoolAuthCookie');
+            var cookie = JSON.parse(cookieString);
+            var userRef = new Firebase(FIREBASE_URI + 'users/' + cookie.uid);
+            return $firebaseObject(userRef);
+        }
     };
     return obj
 })
@@ -87,6 +93,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
                 setTime: timeStamp,
                 expire: expire
             }
+            console.log(cookie);
             var cookieString = JSON.stringify(cookie);
             localStorage.setItem('whirlpoolAuthCookie', cookieString);
         },
@@ -98,7 +105,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
 
 
-carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, authService, $state) {
+carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $firebaseObject, authService, userService, $state) {
 
     $scope.validUwEmail = function(value) {
         if (angular.isUndefined(value)) {
@@ -123,13 +130,14 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         if(authService.validate()) {
             if($state.current.name == "Login" || $state.current.name == "Signup") {
                 console.log("already validated");
+                $rootScope.currentUser = userService.getCurrent();
                 $state.go("Home");
             }else {
-
+                $rootScope.currentUser = userService.getCurrent();
             }
         } else {
             // console.log($state.current.name);
-            if($state.current.name == "Login" || $state.current.name == "Signup") {
+            if($state.current.name == "Login" || $state.current.name == "Signup" || $state.current.name == null) {
 
             } else {
                 console.log("Access Denied");
@@ -139,7 +147,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         }
     });
 })
-.controller('signupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', function($scope, $firebaseObject, userService, FIREBASE_URI) {
+.controller('signupController', ['$scope', '$firebaseObject', 'userService', 'FIREBASE_URI', '$state', function($scope, $firebaseObject, userService, FIREBASE_URI, $state) {
 
 
 
@@ -210,15 +218,17 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                     name : $scope.signup.name,
                     phone : $scope.signup.phone,
                     lat : $scope.signup.lat,
-                    lng : $scope.signup.lng
+                    lng : $scope.signup.lng,
+                    scheduled: false
                 }
 
                 userService.addUser(user);
+                $state.go("Login");
             }
         });
     }
 }])
-.controller('loginController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$state', 'authService', function($scope, $firebaseObject, FIREBASE_URI, userService, $state, authService){
+.controller('loginController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$state', 'authService', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $state, authService){
     var ref = new Firebase(FIREBASE_URI);
 
     //logs in the user with firebase and then attaches their associated user object
@@ -241,8 +251,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                     if(user.uid == authData.uid) {
 
                         //three way binds the match to currentUser so it will persist around site
-                        userService.getUser(user.$id).$bindTo($scope, "currentUser");
-
+                        $rootScope.currentUser = userService.getUser(user.$id);
                         //adds the authorization cookie
                         authService.authorize(authData);
 
@@ -257,20 +266,34 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
         });
     }
 }])
-.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth){
+.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
 
-    var slider = $('#ex1').slider({
+    $scope.toggleDriverView = function() {
+        $state.go('Home.Drivers')
+    }
+
+    $scope.toggleRiderView = function() {
+        $state.go('Home.Riders')
+    }
+
+}])
+.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+
+
+
+    var slider = new Slider('#ex1', {
         formatter: function(value) {
             return 'Pick up zone radius: ' + value;
         },
         tooltip: 'always'
     });
-    slider.slider('disable');
+    slider.disable();
 
     var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
 
-    var map = L.map('map').setView([47.745169, -122.288939], 11);
+    var map_center = [47.745169, -122.288939];
+    var map = L.map('map').setView(map_center, 11);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 18,
@@ -299,47 +322,86 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             } else {
                 layer.setOpacity(0.6);
             }
-        })    
+        })
     }
 
-    $http.get('data/marker_coordinates.json').then(function(response) {
-        response.data.forEach(function(coordinate) {
-            var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
-            marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-            marker.addTo(rider_markers);
-        });
-        rider_markers.addTo(map)
-        
-    });
+
     var authData = $scope.authObj.$getAuth();
     if (authData) {
         var user = userService.getUser(authData.uid).$loaded(function(user) {
-
+            if (user.lat && user.lng) {
+                map.setView([user.lat, user.lng], 13);
+            }
 
             // radius in miles
             // attach to angular model
             // and html input element
-            
+
             if (user.pickUpRadius) {
-                console.log('retrieved pick up radius from auth');
                 $scope.pickUpRadius = user.pickUpRadius;
             } else {
-                console.log('initializing pick up radius');
                 user.pickUpRadius = 2;
                 user.$save();
                 $scope.pickUpRadius = user.pickUpRadius;
             }
-            slider.slider('setValue', $scope.pickUpRadius)
-            slider.slider('enable');
 
-            slider.on('slide', function(slideEvent) {
-                $scope.pickUpRadius = slideEvent.value;
+            slider.setValue($scope.pickUpRadius)
+            slider.enable();
+
+            slider.on('slide', function(value) {
+                $scope.pickUpRadius = value;
                 $scope.update_radius();
             });
 
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
-            filter_markers(circle);
+
+            // load made up markers for development
+            // $http.get('data/marker_coordinates.json').then(function(response) {
+            //     response.data.forEach(function(coordinate) {
+            //         var marker = L.marker([coordinate.lat, coordinate.lng], {opacity: 0.6});
+            //         marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+            //         marker.addTo(rider_markers);
+            //     });
+            //     rider_markers.addTo(map)
+            //     filter_markers(circle)
+
+            // });
+
+
+            var users = userService.getUsers();
+
+            // find users looking for a rider
+            // add them to the map
+            users.$loaded().then(function(user){
+                $http.get('partial/mustache/driver_marker.html').then(function(response) {
+                    var template = response.data;
+
+                    user.forEach(function(user, id) {
+                        var riderTimes = user.riderTimes;
+                        // if riderTimes defined
+                        // this is a rider who is
+                        // requesting a driver
+                        if (riderTimes) {
+                            var template_scope = {
+                                user: user
+                            };
+                            // console.log(JSON.stringify(user.riderTimes.MonAM))
+                            var output = Mustache.render(template, template_scope);
+                            var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
+                            marker.bindPopup(output).openPopup();
+                            marker.addTo(rider_markers);
+                        }
+                    });
+                    rider_markers.addTo(map);
+                    filter_markers(circle);
+
+                })
+
+            });
+
+
+
             $scope.update_radius = function() {
                 circle.setRadius($scope.pickUpRadius * meters_miles_const);
                 filter_markers(circle);
@@ -352,7 +414,7 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
                 map.on('mousemove', function(mousemove_event) {
                     circle.setLatLng(mousemove_event.latlng);
 
-         
+
                     // highlights markers within radius of circle
                     // dims all others
                     filter_markers(circle);
@@ -360,19 +422,73 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
             });
 
             // remove event listener when mouse is removed
-            map.on('mouseup', function(e) {
+            map.on('mouseup', function(mousemove_event) {
                 map.removeEventListener('mousemove');
-                user.lat = e.latlng.lat;
-                user.lng = e.latlng.lng;
-                user.$save();
+
+                // in miles
+                var miles_away = mousemove_event.latlng.distanceTo(circle.getLatLng()) / meters_miles_const;
+
+                if (miles_away < circle.getRadius() / meters_miles_const) {
+                    console.log('Updating user home coordinate')
+                    user.lat = mousemove_event.latlng.lat;
+                    user.lng = mousemove_event.latlng.lng;
+                    user.$save();
+                }
             })
         });
-
-    
-
     }
-
+}])
+.controller('ridersController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state) {
+    var ref = new Firebase(FIREBASE_URI);
+    $scope.authObj = $firebaseAuth(ref);
+    var authData = $scope.authObj.$getAuth();
+    var user = userService.getUser(authData.uid).$loaded(function(user) {
+        $scope.user = user;
+        $scope.editSchedule = !user.scheduled;
+        $scope.AM = {'6:30': 630, '6:45': 645, '7:00': 700, '7:15': 715, '7:30': 730, '7:45': 745, '8:00': 800, '8:15': 815, '8:30': 830, '8:45': 845, '9:00': 900, '9:15': 915, '9:30': 930, '9:45': 945, '10:00': 1000, '10:15': 1015, '10:30': 1030, '10:45': 1045, '11:00': 1100};
+        $scope.PM = {'12:00': 1200, '12:15': 1215, '12:30':1230 , '12:45': 1245, '1:00': 1300, '1:15': 1315, '1:30': 1330, '1:45': 1345, '2:00': 1400, '2:15': 1415, '2:30': 1430, '2:45': 1445, '3:00': 1500, '3:15': 1515, '3:30': 1530, '3:45': 1545, '4:00': 1600, '4:15': 1615, '4:30': 1630};
+    });
+    $scope.updateSchedule = function () {
+        var user = userService.getUser(authData.uid).$loaded(function(user) {
+            $scope.editSchedule = $scope.editSchedule === false ? true: false;
+            user.scheduled = true;
+            user.riderTimes = {
+                MonAM: {
+                    time: parseInt(MonAM.value)
+                },
+                TuesAM: {
+                    time: parseInt(TuesAM.value)
+                },
+                WedAM: {
+                    time: parseInt(WedAM.value)
+                },
+                ThursAM: {
+                    time: parseInt(ThursAM.value)
+                },
+                FriAM: {
+                    time: parseInt(FriAM.value)
+                },
+                MonPM: {
+                    time: parseInt(MonPM.value)
+                },
+                TuesPM: {
+                    time: parseInt(TuesPM.value)
+                },
+                WedPM: {
+                    time: parseInt(WedPM.value)
+                },
+                ThursPM: {
+                    time: parseInt(ThursPM.value)
+                },
+                FriPM: {
+                    time: parseInt(FriPM.value)
+                }
+            }
+            user.$save();
+        });
+    }
 }]);
+
 
 
 carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
@@ -401,5 +517,15 @@ carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider
         url: "/",
         templateUrl: "partial/home.html",
         controller: "homeController"
+    })
+    .state('Home.Drivers', {
+        url: "drivers",
+        templateUrl: "partial/drivers.html",
+        controller: "driversController"
+    })
+    .state('Home.Riders', {
+        url: "riders",
+        templateUrl: "partial/riders.html",
+        controller: "ridersController"
     })
 });
