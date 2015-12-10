@@ -156,17 +156,21 @@ carpoolApp.controller('carpoolCtrl', function($scope, $http, $firebaseObject, au
     var exists = false;
 
     //move marker and update models
+
+    //rather than remove layer, just update the current marker lat and long
     map.on('click', function(e) {
         $scope.$apply(function() {
-            if(exists) {
+            if(map.hasLayer(addressMarker)) {
                 map.removeLayer(addressMarker);
             }
+            
             addressMarker = L.marker([e.latlng.lat, e.latlng.lng], {opacity: 0.6});
             addressMarker.addTo(map);
             $scope.signup.lat = e.latlng.lat;
             $scope.signup.lng = e.latlng.lng;
             exists = true;
         });
+        console.log(exists);
     });
 
     // var ref = new Firebase("https://uwcarpool.firebaseio.com/data");
