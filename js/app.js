@@ -121,6 +121,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
     $scope.logout = function() {
         authService.logout();
+        delete $rootScope.currentUser;
         $state.go("Login");
     }
 
@@ -141,7 +142,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
             } else {
                 console.log("Access Denied");
-                $state.go("Login");
+                $scope.logout();
             }
 
         }
@@ -171,7 +172,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             if(map.hasLayer(addressMarker)) {
                 map.removeLayer(addressMarker);
             }
-            
+
             addressMarker = L.marker([e.latlng.lat, e.latlng.lng], {opacity: 0.6});
             addressMarker.addTo(map);
             $scope.signup.lat = e.latlng.lat;
@@ -278,6 +279,69 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
 }])
 .controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+
+
+
+    //LIAM WORK
+    //
+    //
+    $scope.createCar = function() {
+        console.log($scope.car);
+        $rootScope.currentUser.car = $scope.car;
+        $rootScope.currentUser.$save();
+    }
+
+    $rootScope.addUserToCar = function(id, time) {
+        console.log("fired");
+        user = userService.getUser(id).$loaded(function(user) {
+
+            switch (time) {
+                case "MonAM":
+                    user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "MonPM":
+                    user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "TuesAM":
+                    user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "TuesPM":
+                    user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "WedAM":
+                    user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "WedPM":
+                    user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "ThursAM":
+                    user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "ThursPM":
+                    user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "FriAM":
+                    user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "FriPM":
+                    user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
+                break;
+            }
+            if ($rootScope.currentUser.car.riders) {
+                $rootScope.currentUser.car.riders.push(user.$id);
+            } else {
+                console.log("creating new riders array");
+                $rootScope.currentUser.car.riders = [user.$id];
+            }
+            $rootScope.currentUser.$save();
+            user.$save();
+        });
+
+    }
+
+
+
+
 
 
 
@@ -388,26 +452,44 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                 user: user
                             };
                             // console.log(JSON.stringify(user.riderTimes.MonAM))
-                            var output = Mustache.render(template, template_scope);
                             var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
-                            marker.bindPopup(output).openPopup();
+
+                            // var output = Mustache.render(template, template_scope);
+                            // marker.bindPopup(output).openPopup();
+
+                            marker.user = user;
+
                             marker.addTo(rider_markers);
-                            
+
                             marker.on('click', function(e){
                             
                                 $scope.$apply(function(){
-                                $scope.items = ['output'];
-                                    var modal = $uibModal.open({templateUrl: 'partial/mustache/driver_marker.html', 
-                                                scope: $scope,
-                                                resolve: {
-                                                    items: function () {
-                                                        return $scope.items;
-                                                }}
-                                            });
-            })
-                                    }
-                                )}
-                            });
+                                    $rootScope.modalUser = e.target.user;
+                                    console.log($scope.modalUser);
+                                    // document.getElementById("myModal").modal()
+
+                                    // $scope.items = ['output'];
+                                    var modal = $uibModal.open({
+                                          animation: $scope.animationsEnabled,
+                                          templateUrl: 'driverModal.html',
+                                          size: "lg",
+                                          resolve: {
+                                            items: function () {
+                                              return $scope.items;
+                                            }
+                                          }
+                                    });
+                                    // var modal = $uibModal.open({templateUrl: 'partial/driverModal.html',
+                                    //     scope: $scope,
+                                    //     resolve: {
+                                    //         items: function () {
+                                    //             return $scope.items;
+                                    //     }}
+                                    // });
+                                })
+                            }
+                        )}
+                    });
                     rider_markers.addTo(map);
                     filter_markers(circle);
 
