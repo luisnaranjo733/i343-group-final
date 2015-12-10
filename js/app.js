@@ -142,7 +142,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
             } else {
                 console.log("Access Denied");
-                $state.go("Login");
+                $scope.logout();
             }
 
         }
