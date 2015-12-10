@@ -290,48 +290,51 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         $rootScope.currentUser.$save();
     }
 
-    $rootScope.addUserToCar = function(user, time) {
+    $rootScope.addUserToCar = function(id, time) {
         console.log("fired");
-        switch (time) {
-            case "MonAM":
-                user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
-            break;
-            case "MonPM":
-                user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
-            break;
-            case "TuesAM":
-                user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
-            break;
-            case "TuesPM":
-                user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
-            break;
-            case "WedAM":
-                user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
-            break;
-            case "WedPM":
-                user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
-            break;
-            case "ThursAM":
-                user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
-            break;
-            case "ThursPM":
-                user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
-            break;
-            case "FriAM":
-                user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
-            break;
-            case "FriPM":
-                user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
-            break;
-        }
-        if ($rootScope.currentUser.car.riders) {
-            $rootScope.currentUser.car.riders.push(user.$id);
-        } else {
-            console.log("creating new riders array");
-            $rootScope.currentUser.car.riders = [user.$id];
-        }
-        $rootScope.currentUser.$save();
-        user.$save();
+        user = userService.getUser(id).$loaded(function(user) {
+
+            switch (time) {
+                case "MonAM":
+                    user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "MonPM":
+                    user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "TuesAM":
+                    user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "TuesPM":
+                    user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "WedAM":
+                    user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "WedPM":
+                    user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "ThursAM":
+                    user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "ThursPM":
+                    user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
+                break;
+                case "FriAM":
+                    user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
+                break;
+                case "FriPM":
+                    user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
+                break;
+            }
+            if ($rootScope.currentUser.car.riders) {
+                $rootScope.currentUser.car.riders.push(user.$id);
+            } else {
+                console.log("creating new riders array");
+                $rootScope.currentUser.car.riders = [user.$id];
+            }
+            $rootScope.currentUser.$save();
+            user.$save();
+        });
 
     }
 

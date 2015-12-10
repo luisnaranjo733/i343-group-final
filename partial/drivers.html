@@ -79,13 +79,11 @@
 
 <script type="text/ng-template" id="driverModal.html">
     <div class="modal-header">
-        <h3 class="modal-title">I'm a modal!</h3>
+        <h3 class="modal-title">{{ $root.modalUser.name }}</h3>
     </div>
     <div class="modal-body">
-        <h2>Name:{{ $root.modalUser.name }}</h2>
-        <p>Email:{{ $root.modalUser.email }}</p>
-        <p>Phone:{{ $root.modalUser.phone }}</p>
-
+        <p>{{ $root.modalUser.email }}</p>
+        <p>{{ $root.modalUser.phone }}</p>
         <div class="table-responsive">
             <table class="table">
                 <tr>
@@ -96,21 +94,22 @@
                     <th>Friday</th>
                 </tr>
                 <tr>
-                    <td>{{ $root.modalUser.riderTimes.MonAM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.TuesAM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.WedAM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.ThursAM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.FriAM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.MonAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'MonAM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.TuesAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'TuesAM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.WedAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'WedAM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.ThursAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'ThursAM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.FriAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'FriAM')"><i class="fa fa-plus"></i></button></td>
                 </tr>
                 <tr>
-                    <td>{{ $root.modalUser.riderTimes.MonPM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.TuesPM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.WedPM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.ThursPM.time }}</td>
-                    <td>{{ $root.modalUser.riderTimes.FriPM.time }}</td>
+                    <td>{{ $root.modalUser.riderTimes.MonPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'MonPM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.TuesPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'TuesPM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.WedPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'WedPM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.ThursPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'ThursPM')"><i class="fa fa-plus"></i></button></td>
+                    <td>{{ $root.modalUser.riderTimes.FriPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'FriPM')"><i class="fa fa-plus"></i></button></td>
                 </tr>
             </table>
         </div>
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
