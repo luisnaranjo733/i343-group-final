@@ -93,6 +93,10 @@
     <div class="modal-body">
         <p>{{ $root.modalUser.email }}</p>
         <p>{{ $root.modalUser.phone }}</p>
+        <div class="notice" ng-show="$root.messages.modal">
+        <h4 ng-class="{error: $root.messages.modal.mType == 'error', success: $root.messages.modal.mType == 'success'}" >{{$root.messages.modal.message}}</h4>
+        </div>
+
         <div class="table-responsive">
             <table class="table">
                 <tr>
@@ -103,24 +107,22 @@
                     <th>Friday</th>
                 </tr>
                 <tr>
-                    <td>{{ $root.modalUser.riderTimes.MonAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'MonAM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.TuesAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'TuesAM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.WedAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'WedAM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.ThursAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'ThursAM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.FriAM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'FriAM')"><i class="fa fa-plus"></i></button></td>
+                    <td ng-repeat="(key, value) in $root.modalUser.riderTimes | orderBy: $root.sorted ">
+                        {{key}}
+                        {{value.time}}
+                        <div ng-show="!value.driver || value.driver == $root.currentUser.$id">
+                        <button ng-show="value.driver !== $root.currentUser.$id" class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, key)"><i class="fa fa-plus"></i></button>
+                        <button ng-show="value.driver == $root.currentUser.$id" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, key)"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td>{{ $root.modalUser.riderTimes.MonPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'MonPM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.TuesPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'TuesPM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.WedPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'WedPM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.ThursPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'ThursPM')"><i class="fa fa-plus"></i></button></td>
-                    <td>{{ $root.modalUser.riderTimes.FriPM.time }} <button class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, 'FriPM')"><i class="fa fa-plus"></i></button></td>
                 </tr>
             </table>
         </div>
 
     </div>
     <div class="modal-footer">
-        <button class="btn btn-warning" type="button" ng-click="$close()">Close</button>
+        <button class="btn btn-warning" type="button" ng-click="$close(); $root.clearMessagesFor('modal');">Close</button>
     </div>
 </script>
