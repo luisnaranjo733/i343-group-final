@@ -587,39 +587,33 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             $scope.editSchedule = $scope.editSchedule === false ? true: false;
             user.scheduled = true;
             user.riderTimes = {
-                MonAM: {
-                    time: parseInt(MonAM.value)
+                to: {
+                    mon: parseInt(MonAM.value),
+                    tues: parseInt(TuesAM.value),
+                    wed: parseInt(WedAM.value),
+                    thurs: parseInt(ThursAM.value),
+                    fri: parseInt(FriAM.value)
                 },
-                TuesAM: {
-                    time: parseInt(TuesAM.value)
-                },
-                WedAM: {
-                    time: parseInt(WedAM.value)
-                },
-                ThursAM: {
-                    time: parseInt(ThursAM.value)
-                },
-                FriAM: {
-                    time: parseInt(FriAM.value)
-                },
-                MonPM: {
-                    time: parseInt(MonPM.value)
-                },
-                TuesPM: {
-                    time: parseInt(TuesPM.value)
-                },
-                WedPM: {
-                    time: parseInt(WedPM.value)
-                },
-                ThursPM: {
-                    time: parseInt(ThursPM.value)
-                },
-                FriPM: {
-                    time: parseInt(FriPM.value)
+                from: {
+                    mon: parseInt(MonPM.value),
+                    tues: parseInt(TuesPM.value),
+                    wed: parseInt(WedPM.value),
+                    thurs: parseInt(ThursPM.value),
+                    fri: parseInt(FriPM.value)
                 }
             }
             user.$save();
         });
+    }
+    $scope.getTime = function (time) {
+        var hold = "";
+        if (time >= 1300) {
+            time = time - 1200;
+        }
+        time = time.toString();
+        hold = time.substring(0,time.length-2) + ":";
+        hold = hold+time.substring(time.length-2,time.length);
+        return hold;
     }
 }]);
 
