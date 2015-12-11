@@ -629,7 +629,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         });
     }
     $scope.getTime = function (time) {
-        if($rootScope.currentUser.riderTimes) {
+        if(time) {
             var hold = "";
             if (time >= 1300) {
                 time = time - 1200;
