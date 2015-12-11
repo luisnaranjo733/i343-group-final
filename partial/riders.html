@@ -14,18 +14,18 @@
             <th>Friday</th>
         </tr>
         <tr>
-            <td>{{(user.riderTimes.MonAM.time - user.riderTimes.MonAM.time % 100)/100}}:{{user.riderTimes.MonAM.time % 100}} AM <br>Driver: {{user.riderTimes.MonAM.driver}}</td>
-            <td>{{(user.riderTimes.TuesAM.time - user.riderTimes.TuesAM.time % 100)/100}}:{{user.riderTimes.TuesAM.time % 100}} AM</td>
-            <td>{{(user.riderTimes.WedAM.time - user.riderTimes.WedAM.time % 100)/100}}:{{user.riderTimes.WedAM.time % 100}} AM</td>
-            <td>{{(user.riderTimes.ThursAM.time - user.riderTimes.ThursAM.time % 100)/100}}:{{user.riderTimes.ThursAM.time % 100}} AM</td>
-            <td>{{(user.riderTimes.FriAM.time - user.riderTimes.FriAM.time % 100)/100}}:{{user.riderTimes.FriAM.time % 100}} AM</td>
+            <td>{{getTime(user.riderTimes.to.mon)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.tues)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.wed)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.thurs)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.fri)}} AM</td>
         </tr>
         <tr>
-            <td>{{((user.riderTimes.MonPM.time - 1200) - user.riderTimes.MonPM.time % 100)/100}}:{{user.riderTimes.MonPM.time % 100}} PM</td>
-            <td>{{((user.riderTimes.TuesPM.time - 1200) - user.riderTimes.TuesPM.time % 100)/100}}:{{user.riderTimes.TuesPM.time % 100}} PM</td>
-            <td>{{((user.riderTimes.WedPM.time - 1200) - user.riderTimes.WedPM.time % 100)/100}}:{{user.riderTimes.WedPM.time % 100}} PM</td>
-            <td>{{((user.riderTimes.ThursPM.time - 1200) - user.riderTimes.ThursPM.time % 100)/100}}:{{user.riderTimes.ThursPM.time % 100}} PM</td>
-            <td>{{((user.riderTimes.FriPM.time - 1200) - user.riderTimes.FriPM.time % 100)/100}}:{{user.riderTimes.FriPM.time % 100}} PM</td>
+            <td>{{getTime(user.riderTimes.from.mon)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.tues)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.wed)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.thurs)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.fri)}} PM</td>
         </tr>
     </table>
 </span>
@@ -92,7 +92,7 @@
         </tr>
     </table>
     <button type="submit" class="btn btn-primary" ng-click="updateSchedule()">Update Schedule</button> 
-    <button type="submit" class="btn btn-warning" ng-click="editSchedule = editSchedule === false ? true: false;">Cancel</button>
+    <button type="submit" class="btn btn-warning" ng-show="scheduled = true" ng-click="editSchedule = editSchedule === false ? true: false;">Cancel</button>
 </span>
 <br> <br>
 </div>
