@@ -107,7 +107,7 @@
                     <th>Friday</th>
                 </tr>
                 <tr>
-                    <td ng-repeat="(key, value) in $root.modalUser.riderTimes | orderBy: $root.sorted ">
+                    <td ng-repeat="(key, value) in $root.modalUser.riderTimes">
                         {{key}}
                         {{value.time}}
                         <div ng-show="!value.driver || value.driver == $root.currentUser.$id">

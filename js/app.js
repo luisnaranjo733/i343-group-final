@@ -516,13 +516,6 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                             }
                                           }
                                     });
-                                    // var modal = $uibModal.open({templateUrl: 'partial/driverModal.html',
-                                    //     scope: $scope,
-                                    //     resolve: {
-                                    //         items: function () {
-                                    //             return $scope.items;
-                                    //     }}
-                                    // });
                                 })
                             }
                         )}
