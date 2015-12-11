@@ -61,7 +61,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
             //check to see if cookie even exists
             if(localStorage.getItem('whirlpoolAuthCookie') == null) {
-                console.log('failed');
+                // console.log('failed');
                 return false;
             }else {
 
@@ -122,6 +122,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     $scope.logout = function() {
         authService.logout();
         delete $rootScope.currentUser;
+        console.log("going to login");
         $state.go("Login");
     }
 
@@ -130,7 +131,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     function(event){
         if(authService.validate()) {
             if($state.current.name == "Login" || $state.current.name == "Signup") {
-                console.log("already validated");
+                console.log("already validated sending to homescreen");
                 $rootScope.currentUser = userService.getCurrent();
                 $state.go("Home");
             }else {
@@ -266,7 +267,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     }
 
 }])
-.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout){
 
 
 
@@ -279,343 +280,106 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         $rootScope.currentUser.$save();
     }
 
+    $rootScope.clearMessagesFor = function(key) {
+        console.log('clearing messages for: ' + key);
+        $rootScope.messages[key].mType = null;
+        $rootScope.messages[key].message = null;
+        // $rootScope.messages[key] = null;
+    }
+
+    $scope.initMessages = function() {
+        if(!$rootScope.messages) {
+          $rootScope.messages = {};
+          if (!$rootScope.messages.modal) {
+              $rootScope.messages.modal = {
+                mType : null,
+                message: null
+              };
+          }
+        }
+    }
+    $scope.initMessages();
+
     $rootScope.addUserToCar = function(id, time) {
         console.log("fired");
         user = userService.getUser(id).$loaded(function(user) {
+            $timeout(function() {
+              var thisTime = user.riderTimes[time];
 
-            switch (time) {
-                case "MonAM":
-                    if(!user.riderTimes.MonAM.driver) {
-                        user.riderTimes.MonAM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
 
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.MonAM) {
-                            if($rootScope.currentUser.car.riders.MonAM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
 
-                            if($rootScope.currentUser.car.riders.MonAM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.MonAM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.MonAM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "MonAM": [user.$id]
-                        }
-                    }
-                break;
-                case "MonPM":
-                    if(!user.riderTimes.MonPM.driver) {
-                        user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
+              if (thisTime.driver) {
+                  $rootScope.messages.modal.mType = "error";
+                  console.log($rootScope.messages.modal.mType);
+                  $rootScope.messages.modal.message = user.name + " already has a driver at that time.";
+                  console.log("already has driver");
+                  $scope.$apply();
+                  return;
+              } else {
+                  if ($rootScope.currentUser.car.riders) {
+                      if($rootScope.currentUser.car.riders[time]) {
+                          if($rootScope.currentUser.car.riders[time].length >= $rootScope.currentUser.car.seats){
+                              $rootScope.messages.modal.mType = "error";
+                              $rootScope.messages.modal.message = "I'm sorry but your car is full at that time.";
+                              console.log("car is Full");
+                              return;
+                          } else {
+                              if($rootScope.currentUser.car.riders[time].indexOf(user.$id) > -1) {
+                                  $rootScope.currentUser.car.riders[time].push(user.$id);
+                                  $rootScope.messages.modal.mType = "success";
+                                  $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                              } else {
+                                  console.log($rootScope.messages);
+                                  $rootScope.messages.modal.mType = "error";
+                                  $rootScope.messages.modal.message = user.name + " is already in your car at that time.";
+                                  console.log("already in the car");
+                                  return;
+                              }
+                          }
+                      } else {
+                          $rootScope.currentUser.car.riders[time] = [user.$id];
+                          $rootScope.messages.modal.mType = "success";
+                          $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                      }
+                  } else {
+                      $rootScope.messages.modal.mType = "success";
+                      $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                      console.log("creating new riders array");
+                      $rootScope.currentUser.car.riders = {};
+                      $rootScope.currentUser.car.riders[time] = [user.$id];
+                  }
 
-                    user.riderTimes.MonPM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.MonPM) {
-                            if($rootScope.currentUser.car.riders.MonPM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
+                  thisTime.driver = $rootScope.currentUser.$id;
+              }
+              $rootScope.currentUser.$save();
+              user.$save();
+            }, 0);
 
-                            if($rootScope.currentUser.car.riders.MonPM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.MonPM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.MonPM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "MonPM": [user.$id]
-                        }
-                    }
-                break;
-                case "TuesAM":
-                    if(!user.riderTimes.TuesAM.driver) {
-                        user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.TuesAM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.TuesAM) {
-                            if($rootScope.currentUser.car.riders.TuesAM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.TuesAM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.TuesAM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.TuesAM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "TuesAM": [user.$id]
-                        }
-                    }
-                break;
-                case "TuesPM":
-                    if(!user.riderTimes.TuesPM.driver) {
-                        user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.TuesPM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.TuesPM) {
-                            if($rootScope.currentUser.car.riders.TuesPM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.TuesPM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.TuesPM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.TuesPM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "TuesPM": [user.$id]
-                        }
-                    }
-                break;
-                case "WedAM":
-                    if(!user.riderTimes.WedAM.driver) {
-                        user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.WedAM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.WedAM) {
-                            if($rootScope.currentUser.car.riders.WedAM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.WedAM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.WedAM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.WedAM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "WedAM": [user.$id]
-                        }
-                    }
-                break;
-                case "WedPM":
-                    if(!user.riderTimes.WedPM.driver) {
-                        user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.WedPM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.WedPM) {
-                            if($rootScope.currentUser.car.riders.WedPM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.WedPM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.WedPM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.WedPM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "WedPM": [user.$id]
-                        }
-                    }
-                break;
-                case "ThursAM":
-                    if(!user.riderTimes.ThursAM.driver) {
-                        user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.ThursAM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.ThursAM) {
-                            if($rootScope.currentUser.car.riders.ThursAM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.ThursAM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.ThursAM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.ThursAM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "ThursAM": [user.$id]
-                        }
-                    }
-                break;
-                case "ThursPM":
-                    if(!user.riderTimes.ThursPM.driver) {
-                        user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.ThursPM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.ThursPM) {
-                            if($rootScope.currentUser.car.riders.ThursPM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.ThursPM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.ThursPM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.ThursPM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "ThursPM": [user.$id]
-                        }
-                    }
-                break;
-                case "FriAM":
-                    if(!user.riderTimes.FriAM.driver) {
-                        user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.FriAM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.FriAM) {
-                            if($rootScope.currentUser.car.riders.FriAM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.FriAM.indexOf(user.$id) > -1) {
-                                $rootScope.currentUser.car.riders.FriAM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.FriAM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "FriAM": [user.$id]
-                        }
-                    }
-                break;
-                case "FriPM":
-                    if(!user.riderTimes.FriPM.driver) {
-                        user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
-                    } else {
-                        console.log("already has driver");
-                        return;
-                    }
-
-                    user.riderTimes.FriPM.driver = $rootScope.currentUser.$id;
-                    if ($rootScope.currentUser.car.riders) {
-                        if($rootScope.currentUser.car.riders.FriPM) {
-                            if($rootScope.currentUser.car.riders.FriPM.length >= $rootScope.currentUser.car.seats){
-                                console.log("car is Full");
-                                return;
-                            }
-
-                            if($rootScope.currentUser.car.riders.FriPM.indexOf(user.$id) > -1) {
-                                console.log($rootScope.currentUser.car.riders.FriPM.indexOf(user.$id));
-                                $rootScope.currentUser.car.riders.FriPM.push(user.$id);
-                            } else {
-                                console.log("already in the car");
-                                return;
-                            }
-                        } else {
-                            $rootScope.currentUser.car.riders.FriPM = [user.$id];
-                        }
-                    } else {
-                        console.log("creating new riders array");
-                        $rootScope.currentUser.car.riders = {
-                            "FriPM": [user.$id]
-                        }
-                    }
-                break;
-            }
-
-            $rootScope.currentUser.$save();
-            user.$save();
         });
 
     }
 
+    $rootScope.removeUserFromCar = function(id, time) {
+        var user = userService.getUser(id).$loaded(function(user) {
+            user.riderTimes[time].driver = null;
+            var index = $rootScope.currentUser.car.riders[time].indexOf(id);
+            $rootScope.currentUser.car.riders[time].splice(index, 1);
+
+            $rootScope.messages.modal.mType = "success";
+            $rootScope.messages.modal.message = user.name + " was removed succesfully.";
+            user.$save();
+            $rootScope.currentUser.$save();
+        });
+    }
 
 
 
+    $scope.dateOrders = ["MonAM", "MonPM", "TuesAM", "TuesPM", "WedAM", "WedPM", "ThursAM", "ThursPM", "FriAM", "FriPM"];
 
+    $rootScope.Sorted = function(time) {
+    console.log("time");
+    return $scope.dateOrders.indexOf(time)
+    };
 
 
     var slider = new Slider('#ex1', {
@@ -735,7 +499,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                             marker.addTo(rider_markers);
 
                             marker.on('click', function(e){
-                            
+
                                 $scope.$apply(function(){
                                     $rootScope.modalUser = e.target.user;
                                     console.log($scope.modalUser);
@@ -823,43 +587,35 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             $scope.editSchedule = $scope.editSchedule === false ? true: false;
             user.scheduled = true;
             user.riderTimes = {
-                MonAM: {
-                    time: parseInt(MonAM.value)
+                to: {
+                    mon: parseInt(MonAM.value),
+                    tues: parseInt(TuesAM.value),
+                    wed: parseInt(WedAM.value),
+                    thurs: parseInt(ThursAM.value),
+                    fri: parseInt(FriAM.value)
                 },
-                TuesAM: {
-                    time: parseInt(TuesAM.value)
-                },
-                WedAM: {
-                    time: parseInt(WedAM.value)
-                },
-                ThursAM: {
-                    time: parseInt(ThursAM.value)
-                },
-                FriAM: {
-                    time: parseInt(FriAM.value)
-                },
-                MonPM: {
-                    time: parseInt(MonPM.value)
-                },
-                TuesPM: {
-                    time: parseInt(TuesPM.value)
-                },
-                WedPM: {
-                    time: parseInt(WedPM.value)
-                },
-                ThursPM: {
-                    time: parseInt(ThursPM.value)
-                },
-                FriPM: {
-                    time: parseInt(FriPM.value)
+                from: {
+                    mon: parseInt(MonPM.value),
+                    tues: parseInt(TuesPM.value),
+                    wed: parseInt(WedPM.value),
+                    thurs: parseInt(ThursPM.value),
+                    fri: parseInt(FriPM.value)
                 }
             }
             user.$save();
         });
     }
+    $scope.getTime = function (time) {
+        var hold = "";
+        if (time >= 1300) {
+            time = time - 1200;
+        }
+        time = time.toString();
+        hold = time.substring(0,time.length-2) + ":";
+        hold = hold+time.substring(time.length-2,time.length);
+        return hold;
+    }
 }]);
-
-
 
 carpoolApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     // For any unmatched url, redirect to /state1
