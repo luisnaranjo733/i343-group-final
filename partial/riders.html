@@ -7,41 +7,41 @@
     <p> Showing Schedule for: {{user.name}} <p>
    	<table class="table">
         <tr>
-            <th>Monday</th> 
- 	        <th>Tuesday</th> 
-            <th>Wednesday</th> 
-            <th>Thursday</th> 
+            <th>Monday</th>
+ 	        <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
             <th>Friday</th>
         </tr>
         <tr>
-            <td>{{getTime(user.riderTimes.to.mon)}} AM</td>
-            <td>{{getTime(user.riderTimes.to.tues)}} AM</td>
-            <td>{{getTime(user.riderTimes.to.wed)}} AM</td>
-            <td>{{getTime(user.riderTimes.to.thurs)}} AM</td>
-            <td>{{getTime(user.riderTimes.to.fri)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.mon.time)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.tues.time)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.wed.time)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.thurs.time)}} AM</td>
+            <td>{{getTime(user.riderTimes.to.fri.time)}} AM</td>
         </tr>
         <tr>
-            <td>{{getTime(user.riderTimes.from.mon)}} PM</td>
-            <td>{{getTime(user.riderTimes.from.tues)}} PM</td>
-            <td>{{getTime(user.riderTimes.from.wed)}} PM</td>
-            <td>{{getTime(user.riderTimes.from.thurs)}} PM</td>
-            <td>{{getTime(user.riderTimes.from.fri)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.mon.time)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.tues.time)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.wed.time)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.thurs.time)}} PM</td>
+            <td>{{getTime(user.riderTimes.from.fri.time)}} PM</td>
         </tr>
     </table>
 </span>
 
 <!-- Show if editing -->
-<span ng-show="editSchedule"> 
+<span ng-show="editSchedule">
     <p ng-show="user.scheduled = false">***Looks like we don't have a schedule on file for you. If you are a Driver, please click above to return to the Driver tab. If you are looking for a carpool, please fill out your schedule below.***</p>
     <h2>Schedule Pick-Up Times</h2>
     <p>Please make a selection from the drop down lists with your preferred departure time to and from school. If you do not require a ride on a day, please select None.</p>
     <table class="table">
         <tr>
-            <th>Time</th> 
-            <th>Monday</th> 
-            <th>Tuesday</th> 
-            <th>Wednesday</th> 
-            <th>Thursday</th> 
+            <th>Time</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
             <th>Friday</th>
         </tr>
         <tr>
@@ -91,7 +91,7 @@
                 </select></td>
         </tr>
     </table>
-    <button type="submit" class="btn btn-primary" ng-click="updateSchedule()">Update Schedule</button> 
+    <button type="submit" class="btn btn-primary" ng-click="updateSchedule()">Update Schedule</button>
     <button type="submit" class="btn btn-warning" ng-show="scheduled = true" ng-click="editSchedule = editSchedule === false ? true: false;">Cancel</button>
 </span>
 <br> <br>
