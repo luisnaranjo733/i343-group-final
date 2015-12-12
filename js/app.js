@@ -300,12 +300,12 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     }
     $scope.initMessages();
 
-    $rootScope.addUserToCar = function(id, time) {
+    $rootScope.addUserToCar = function(id, time, direction) {
         console.log("fired");
         user = userService.getUser(id).$loaded(function(user) {
             $timeout(function() {
-              var thisTime = user.riderTimes[time];
-
+              var thisTime = user.riderTimes[direction][time];
+              // var thisCar = $rootScope.currentUser.car.riders[direction][time];
 
 
               if (thisTime.driver) {
@@ -317,36 +317,46 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                   return;
               } else {
                   if ($rootScope.currentUser.car.riders) {
-                      if($rootScope.currentUser.car.riders[time]) {
-                          if($rootScope.currentUser.car.riders[time].length >= $rootScope.currentUser.car.seats){
-                              $rootScope.messages.modal.mType = "error";
-                              $rootScope.messages.modal.message = "I'm sorry but your car is full at that time.";
-                              console.log("car is Full");
-                              return;
-                          } else {
-                              if($rootScope.currentUser.car.riders[time].indexOf(user.$id) > -1) {
-                                  $rootScope.currentUser.car.riders[time].push(user.$id);
-                                  $rootScope.messages.modal.mType = "success";
-                                  $rootScope.messages.modal.message = user.name + " was added succesfully.";
-                              } else {
-                                  console.log($rootScope.messages);
-                                  $rootScope.messages.modal.mType = "error";
-                                  $rootScope.messages.modal.message = user.name + " is already in your car at that time.";
-                                  console.log("already in the car");
-                                  return;
-                              }
-                          }
-                      } else {
-                          $rootScope.currentUser.car.riders[time] = [user.$id];
-                          $rootScope.messages.modal.mType = "success";
-                          $rootScope.messages.modal.message = user.name + " was added succesfully.";
-                      }
+                    if($rootScope.currentUser.car.riders[direction]) {
+                        if($rootScope.currentUser.car.riders[direction][time]) {
+                            if($rootScope.currentUser.car.riders[direction][time].length >= $rootScope.currentUser.car.seats){
+                                $rootScope.messages.modal.mType = "error";
+                                $rootScope.messages.modal.message = "I'm sorry but your car is full at that time.";
+                                console.log("car is Full");
+                                return;
+                            } else {
+                                if($rootScope.currentUser.car.riders[direction][time].indexOf(user.$id) > -1) {
+                                    $rootScope.currentUser.car.riders[direction][time].push(user.$id);
+                                    $rootScope.messages.modal.mType = "success";
+                                    $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                                } else {
+                                    console.log($rootScope.messages);
+                                    $rootScope.messages.modal.mType = "error";
+                                    $rootScope.messages.modal.message = user.name + " is already in your car at that time.";
+                                    console.log("already in the car");
+                                    return;
+                                }
+                            }
+                        } else {
+                            $rootScope.currentUser.car.riders[direction][time] = [user.$id];
+                            $rootScope.messages.modal.mType = "success";
+                            $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                        }
+                    } else {
+                        $rootScope.messages.modal.mType = "success";
+                        $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                        console.log("creating new direction array");
+                        $rootScope.currentUser.car.riders[direction] = {};
+                        $rootScope.currentUser.car.riders[direction][time] = [user.$id];
+                    }
+
                   } else {
                       $rootScope.messages.modal.mType = "success";
                       $rootScope.messages.modal.message = user.name + " was added succesfully.";
                       console.log("creating new riders array");
                       $rootScope.currentUser.car.riders = {};
-                      $rootScope.currentUser.car.riders[time] = [user.$id];
+                      $rootScope.currentUser.car.riders[direction] = {};
+                      $rootScope.currentUser.car.riders[direction][time] = [user.$id];
                   }
 
                   thisTime.driver = $rootScope.currentUser.$id;
@@ -359,11 +369,11 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
     }
 
-    $rootScope.removeUserFromCar = function(id, time) {
+    $rootScope.removeUserFromCar = function(id, time, direction) {
         var user = userService.getUser(id).$loaded(function(user) {
-            user.riderTimes[time].driver = null;
-            var index = $rootScope.currentUser.car.riders[time].indexOf(id);
-            $rootScope.currentUser.car.riders[time].splice(index, 1);
+            user.riderTimes[direction][time].driver = null;
+            var index = $rootScope.currentUser.car.riders[direction][time].indexOf(id);
+            $rootScope.currentUser.car.riders[direction][time].splice(index, 1);
 
             $rootScope.messages.modal.mType = "success";
             $rootScope.messages.modal.message = user.name + " was removed succesfully.";
@@ -373,8 +383,8 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     }
 
 
-
-    $scope.dateOrders = ["MonAM", "MonPM", "TuesAM", "TuesPM", "WedAM", "WedPM", "ThursAM", "ThursPM", "FriAM", "FriPM"];
+    $rootScope.directions = ['to', 'from'];
+    $rootScope.days = ["mon", "tues", "wed", "thurs", "fri"];
 
     $rootScope.Sorted = function(time) {
     console.log("time");
@@ -516,13 +526,6 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                             }
                                           }
                                     });
-                                    // var modal = $uibModal.open({templateUrl: 'partial/driverModal.html',
-                                    //     scope: $scope,
-                                    //     resolve: {
-                                    //         items: function () {
-                                    //             return $scope.items;
-                                    //     }}
-                                    // });
                                 })
                             }
                         )}
@@ -572,7 +575,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         });
     }
 }])
-.controller('ridersController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state) {
+.controller('ridersController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state) {
     var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
     var authData = $scope.authObj.$getAuth();
@@ -588,32 +591,74 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             user.scheduled = true;
             user.riderTimes = {
                 to: {
-                    mon: parseInt(MonAM.value),
-                    tues: parseInt(TuesAM.value),
-                    wed: parseInt(WedAM.value),
-                    thurs: parseInt(ThursAM.value),
-                    fri: parseInt(FriAM.value)
+                    mon: {
+
+                        time: $scope.setTime(MonAM.value)
+                    },
+                    tues: {
+                        time: $scope.setTime(TuesAM.value)
+                    },
+                    wed: {
+                        time: $scope.setTime(WedAM.value)
+                    },
+                    thurs: {
+                        time: $scope.setTime(ThursAM.value)
+                    },
+                    fri: {
+                        time: $scope.setTime(FriAM.value)
+                    }
                 },
                 from: {
-                    mon: parseInt(MonPM.value),
-                    tues: parseInt(TuesPM.value),
-                    wed: parseInt(WedPM.value),
-                    thurs: parseInt(ThursPM.value),
-                    fri: parseInt(FriPM.value)
+                    mon: {
+                        time: $scope.setTime(MonPM.value)
+                    },
+                    tues: {
+                        time: $scope.setTime(TuesPM.value)
+                    },
+                    wed: {
+                        time: $scope.setTime(WedPM.value)
+                    },
+                    thurs: {
+                        time: $scope.setTime(ThursPM.value)
+                    },
+                    fri: {
+                        time: $scope.setTime(FriPM.value)
+                    }
                 }
             }
             user.$save();
         });
     }
-    $scope.getTime = function (time) {
-        var hold = "";
-        if (time >= 1300) {
-            time = time - 1200;
+
+    /* Only used during the set function, turns time into an int value */
+    $scope.setTime = function (time) {
+        if (time == null || time == "") {
+            return null;
+        } else {
+            return parseInt(time);
         }
-        time = time.toString();
-        hold = time.substring(0,time.length-2) + ":";
-        hold = hold+time.substring(time.length-2,time.length);
-        return hold;
+    }
+
+    /* Used to get a formated time back from the stored int */
+    $scope.getTime = function (time) {
+        if(time == null) {
+            return "None";
+        } else {
+            var split = "";
+            var hold = "";
+            if (time >= 1200) {
+                split = 'PM';
+            } else {
+                split = 'AM';
+            }
+            if (time >= 1300) {
+                time = time - 1200;
+            }
+            time = time.toString();
+            hold = time.substring(0,time.length-2) + ":";
+            hold = hold + time.substring(time.length-2,time.length) + " " + split;
+            return hold;
+        }
     }
 }]);
 
