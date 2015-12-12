@@ -592,51 +592,71 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             user.riderTimes = {
                 to: {
                     mon: {
-                        time: parseInt(MonAM.value)
+
+                        time: $scope.setTime(MonAM.value)
                     },
                     tues: {
-                        time: parseInt(TuesAM.value)
+                        time: $scope.setTime(TuesAM.value)
                     },
                     wed: {
-                        time: parseInt(WedAM.value)
+                        time: $scope.setTime(WedAM.value)
                     },
                     thurs: {
-                        time: parseInt(ThursAM.value)
+                        time: $scope.setTime(ThursAM.value)
                     },
                     fri: {
-                        time: parseInt(FriAM.value)
+                        time: $scope.setTime(FriAM.value)
                     }
                 },
                 from: {
                     mon: {
-                        time: parseInt(MonPM.value)
+                        time: $scope.setTime(MonPM.value)
                     },
                     tues: {
-                        time: parseInt(TuesPM.value)
+                        time: $scope.setTime(TuesPM.value)
                     },
                     wed: {
-                        time: parseInt(WedPM.value)
+                        time: $scope.setTime(WedPM.value)
                     },
                     thurs: {
-                        time: parseInt(ThursPM.value)
+                        time: $scope.setTime(ThursPM.value)
                     },
                     fri: {
-                        time: parseInt(FriPM.value)
+                        time: $scope.setTime(FriPM.value)
                     }
                 }
             }
             user.$save();
         });
     }
+
+    /* Only used during the set function, turns time into an int value */
+    $scope.setTime = function (time) {
+        if (time == null || time == "") {
+            return null;
+        } else {
+            return parseInt(time);
+        }
+    }
+
+    /* Used to get a formated time back from the stored int */
     $scope.getTime = function (time) {
-        if(time) {
+        if(time == null) {
+            return "None";
+        } else {
+            var split = "";
             var hold = "";
+            if (time >= 1200) {
+                split = 'PM';
+            } else {
+                split = 'AM';
+            }
             if (time >= 1300) {
                 time = time - 1200;
             }
             time = time.toString();
             hold = time.substring(0,time.length-2) + ":";
-            hold = hold+time.substring(time.length-2,time.length);
+            hold = hold + time.substring(time.length-2,time.length) + " " + split;
             return hold;
         }
     }
