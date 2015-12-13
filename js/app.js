@@ -174,7 +174,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                 map.removeLayer(addressMarker);
             }
 
-            addressMarker = L.marker([e.latlng.lat, e.latlng.lng], {opacity: 0.6});
+            addressMarker = L.marker([e.latlng.lat, e.latlng.lng]);
             addressMarker.addTo(map);
             $scope.signup.lat = e.latlng.lat;
             $scope.signup.lng = e.latlng.lng;
