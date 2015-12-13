@@ -394,9 +394,9 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
     var slider = new Slider('#ex1', {
         formatter: function(value) {
-            return 'Pick up zone radius: ' + value;
+            return 'Pick-Up Zone Radius: ' + value;
         },
-        tooltip: 'always'
+        tooltip: 'hover'
     });
     slider.disable();
 
