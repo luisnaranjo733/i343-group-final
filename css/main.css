@@ -115,3 +115,13 @@ nav {
 	}
 }
 
+/* Media query, instructions for small screens */
+@media screen and (max-width: 768px){
+	h2 {
+		font-size: 150%;
+	}
+
+	#whirlpool {
+		margin: 30px;
+	}
+}
