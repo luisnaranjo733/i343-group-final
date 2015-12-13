@@ -58,14 +58,19 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
     $rootScope.alerts = [];
 
     alertService.loadPendingAlerts = function(user) {
-        user.alerts.forEach(function(alert) {
-            if (!alert.displayed) {
-                $rootScope.alerts.push(alert);
-                alert.displayed =  true;
-                user.$save();                
-            }
+        if (user.alerts) {
+            user.alerts.forEach(function(alert) {
+                if (!alert.displayed) {
+                    $rootScope.alerts.push(alert);
+                    alert.displayed =  true;
+                    user.$save();                
+                }
 
-        })
+            })            
+        } else {
+            console.log('no unseen alerts')
+        }
+
     }
 
 
@@ -331,7 +336,11 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 .controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout){
 
     $scope.addTestAlert = function() {
-        $rootScope.saveAlert($rootScope.currentUser.$id, 'test message', 'success');
+        // get uid of current user
+        var uid = $rootScope.currentUser.$id;
+        // set explicit uid to test alerting another user
+        uid = 'd3f930d5-fe3e-4054-9b43-d1d39cd9b750';
+        $rootScope.saveAlert(uid, 'test message', 'success');
     }
 
     //LIAM WORK
