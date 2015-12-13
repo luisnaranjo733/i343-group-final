@@ -81,6 +81,9 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
             displayed: false
         };
 
+        console.log('saving alert')
+        console.log(uid)
+
         // if alert for current user, just display
         if ($rootScope.currentUser.$id === uid) {
             $rootScope.alerts.push(alert);
@@ -328,7 +331,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     
 
 }])
-.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout){
+.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', 'alertService', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout, alertService){
 
     $scope.addTestAlert = function() {
         // get uid of current user
@@ -396,6 +399,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                     $rootScope.currentUser.car.riders[direction][time].push(user.$id);
                                     $rootScope.messages.modal.mType = "success";
                                     $rootScope.messages.modal.message = user.name + " was added succesfully.";
+                                    alertService.saveAlert($rootScope.currentUser.$id, 'user.name + " was added succesfully.', 'success')
                                 } else {
                                     console.log($rootScope.messages);
                                     $rootScope.messages.modal.mType = "error";

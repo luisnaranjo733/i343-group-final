@@ -53,13 +53,16 @@
                     <tr>
                         <td>Number of AM Riders:</td>
                         <td ng-repeat="day in $root.days">
-                            {{ $root.currentUser.car.riders.to[day].length || 0 }}
+                            <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.to[day].length">
+                                {{ $root.currentUser.car.riders.to[day].length || 0 }}
+                            </button>
+
                         </td>
                     </tr>
                     <tr>
                         <td>Number of PM Riders:</td>
                         <td ng-repeat="day in $root.days">
-                            {{ $root.currentUser.car.riders.from[day].length || 0 }}
+                            <button type="button" class="btn btn-primary">{{ $root.currentUser.car.riders.from[day].length || 0 }}</button>
                         </td>
                     </tr>
                 </tbody>
