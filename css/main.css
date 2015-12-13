@@ -78,6 +78,10 @@ nav {
     margin-left: 10px;
 }
 
+.add-btn {
+	margin-left: 10px;
+}
+
 #drivers h6 {
 	margin:5px 0px;
 }
@@ -111,3 +115,13 @@ nav {
 	}
 }
 
+/* Media query, instructions for small screens */
+@media screen and (max-width: 768px){
+	h2 {
+		font-size: 150%;
+	}
+
+	#whirlpool {
+		margin: 30px;
+	}
+}
