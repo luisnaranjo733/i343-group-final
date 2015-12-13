@@ -83,23 +83,18 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
         // if alert for current user, just display
         if ($rootScope.currentUser.$id === uid) {
-            console.log('alerting the current user')
             $rootScope.alerts.push(alert);
+            alert.displayed = true;
         // if alert for another user, save to firebase
-        } else {
-            console.log('alerting another user')
-            userService.getUser(uid).$loaded(function(user) {
-                if (user.alerts) {
-                    console.log('alerts exist');
-                    user.alerts.push(alert);
-                } else {
-                    console.log('alerts do not already exist');
-                    user.alerts = [alert];
-                }
-                user.$save();
-            })  
         }
-        
+        userService.getUser(uid).$loaded(function(user) {
+            if (user.alerts) {
+                user.alerts.push(alert);
+            } else {
+                user.alerts = [alert];
+            }
+            user.$save();
+        })  
 
     }
     $rootScope.saveAlert = alertService.saveAlert;
@@ -339,7 +334,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         // get uid of current user
         var uid = $rootScope.currentUser.$id;
         // set explicit uid to test alerting another user
-        uid = 'd3f930d5-fe3e-4054-9b43-d1d39cd9b750';
+        //uid = 'd3f930d5-fe3e-4054-9b43-d1d39cd9b750';
         $rootScope.saveAlert(uid, 'test message', 'success');
     }
 
