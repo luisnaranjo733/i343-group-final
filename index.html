@@ -51,6 +51,7 @@
     <h1 class="centertext" id="whirlpool">Whirlpool</h1>
 </header>
     <div class="container" ng-controller="carpoolCtrl">
+    <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
         <div class="clearfix" ui-view></div>
     </div>
 

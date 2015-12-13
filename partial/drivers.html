@@ -1,5 +1,6 @@
 <div id="drivers">
     <h1>Driver</h1>
+    <button type="button" class="btn btn-primary" ng-click="addTestAlert()">Add alert</button>
     <div ng-hide="$root.currentUser.car" id="createCar">
         <h3>Create your car</h3>
         <form name="createCarForm" ng-submit="createCarForm.$valid && createCar()" novalidate>

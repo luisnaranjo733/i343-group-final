@@ -53,6 +53,62 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
     };
     return obj
 })
+.factory('alertService', ['$rootScope', 'userService', 'FIREBASE_URI', function($rootScope, userService, FIREBASE_URI) {
+    var alertService = {};
+    $rootScope.alerts = [];
+
+    alertService.loadPendingAlerts = function(user) {
+        user.alerts.forEach(function(alert) {
+            if (!alert.displayed) {
+                $rootScope.alerts.push(alert);
+                alert.displayed =  true;
+                user.$save();                
+            }
+
+        })
+    }
+
+
+    alertService.saveAlert = function(uid, message, alert_type) {
+        var alert = {
+            msg: message,
+            type: alert_type,
+            displayed: false
+        };
+
+        // if alert for current user, just display
+        if ($rootScope.currentUser.$id === uid) {
+            console.log('alerting the current user')
+            $rootScope.alerts.push(alert);
+        // if alert for another user, save to firebase
+        } else {
+            console.log('alerting another user')
+            userService.getUser(uid).$loaded(function(user) {
+                if (user.alerts) {
+                    console.log('alerts exist');
+                    user.alerts.push(alert);
+                } else {
+                    console.log('alerts do not already exist');
+                    user.alerts = [alert];
+                }
+                user.$save();
+            })  
+        }
+        
+
+    }
+    $rootScope.saveAlert = alertService.saveAlert;
+
+    alertService.closeAlert = function(index) {
+        console.log('closing alert: ' +  index);
+        $rootScope.alerts.splice(index, 1);
+    }
+    $rootScope.closeAlert = alertService.closeAlert;
+
+    return alertService
+
+
+}])
 .factory('authService', function($firebaseObject, FIREBASE_URI) {
     var ref = new Firebase(FIREBASE_URI + 'users');
 
@@ -105,7 +161,7 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
 
 
 
-carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $firebaseObject, authService, userService, $state) {
+carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $firebaseObject, authService, userService, $state, alertService) {
 
     $scope.validUwEmail = function(value) {
         if (angular.isUndefined(value)) {
@@ -256,7 +312,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         });
     }
 }])
-.controller('homeController', ['$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state){
+.controller('homeController', ['$scope', '$rootScope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', 'alertService', function($scope, $rootScope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state, alertService){
 
     $scope.toggleDriverView = function() {
         $state.go('Home.Drivers')
@@ -265,11 +321,18 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     $scope.toggleRiderView = function() {
         $state.go('Home.Riders')
     }
+    console.log('home controller')
+    $rootScope.currentUser.$loaded(function(user) {
+        alertService.loadPendingAlerts(user)
+    })
+    
 
 }])
 .controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout){
 
-
+    $scope.addTestAlert = function() {
+        $rootScope.saveAlert($rootScope.currentUser.$id, 'test message', 'success');
+    }
 
     //LIAM WORK
     //
@@ -572,6 +635,8 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                     user.$save();
                 }
             })
+
+
         });
     }
 }])
