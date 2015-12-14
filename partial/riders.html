@@ -34,6 +34,8 @@
                 {{getTime(user.riderTimes.from[day].time)}}
                 <div ng-show="testDrivers.from[day].driver">
                     <br>Driver: {{testDrivers.from[day].driver.$$state.value.name}}
+                    <br>Phone: {{testDrivers.from[day].driver.$$state.value.phone}}
+                    <br>Car Model: {{testDrivers.from[day].driver.$$state.value.car.model}}
                 </div>
 
             </td>

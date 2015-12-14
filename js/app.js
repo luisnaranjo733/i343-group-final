@@ -326,7 +326,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         $rootScope.testDrivers = {};
         if($rootScope.currentUser.riderTimes) {
             angular.forEach($rootScope.directions, function(direction, directionKey){
-                console.log($rootScope.currentUser.riderTimes);
+                // console.log($rootScope.currentUser.riderTimes);
                 if($rootScope.currentUser.riderTimes[direction]){
                     $rootScope.testDrivers[direction] = {};
                     angular.forEach($rootScope.days, function(day, dayKey){
@@ -336,7 +336,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                 $rootScope.testDrivers[direction][day].driver = userService.getUser($rootScope.currentUser.riderTimes[direction][day].driver).$loaded(function(driver) {
                                     return driver;
                                 });
-                                console.log($rootScope.testDrivers);
+                                // console.log($rootScope.testDrivers);
                             }
                         }
                     })
