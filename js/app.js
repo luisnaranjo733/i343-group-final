@@ -789,10 +789,14 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     var authData = $scope.authObj.$getAuth();
     var user = userService.getUser(authData.uid).$loaded(function(user) {
 */
-        $scope.user = $rootScope.currentUser;
-        $scope.editSchedule = !$scope.user.scheduled;
-        $scope.AM = {'6:30': 630, '6:45': 645, '7:00': 700, '7:15': 715, '7:30': 730, '7:45': 745, '8:00': 800, '8:15': 815, '8:30': 830, '8:45': 845, '9:00': 900, '9:15': 915, '9:30': 930, '9:45': 945, '10:00': 1000, '10:15': 1015, '10:30': 1030, '10:45': 1045, '11:00': 1100};
-        $scope.PM = {'12:00': 1200, '12:15': 1215, '12:30':1230 , '12:45': 1245, '1:00': 1300, '1:15': 1315, '1:30': 1330, '1:45': 1345, '2:00': 1400, '2:15': 1415, '2:30': 1430, '2:45': 1445, '3:00': 1500, '3:15': 1515, '3:30': 1530, '3:45': 1545, '4:00': 1600, '4:15': 1615, '4:30': 1630};
+    $scope.user = $rootScope.currentUser;
+    $scope.editSchedule = !$scope.user.scheduled;
+    $scope.AM = {'6:30': 630, '6:45': 645, '7:00': 700, '7:15': 715, '7:30': 730, '7:45': 745, '8:00': 800, '8:15': 815, '8:30': 830, '8:45': 845, '9:00': 900, '9:15': 915, '9:30': 930, '9:45': 945, '10:00': 1000, '10:15': 1015, '10:30': 1030, '10:45': 1045, '11:00': 1100};
+    $scope.PM = {'12:00': 1200, '12:15': 1215, '12:30':1230 , '12:45': 1245, '1:00': 1300, '1:15': 1315, '1:30': 1330, '1:45': 1345, '2:00': 1400, '2:15': 1415, '2:30': 1430, '2:45': 1445, '3:00': 1500, '3:15': 1515, '3:30': 1530, '3:45': 1545, '4:00': 1600, '4:15': 1615, '4:30': 1630};
+    $scope.monToDriver = $scope.getDriver($scope.user.riderTimes.to.mon.driver);
+    $scope.test = $scope.getTime(400);
+    console.log($scope.test);
+
     $scope.updateSchedule = function () {
         var user = userService.getUser(authData.uid).$loaded(function(user) {
             $scope.editSchedule = $scope.editSchedule === false ? true: false;
@@ -868,12 +872,12 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         }
     }
 
-    $scope.getDriver = function(driverID) {
+    $scope.getDriver = function (driverID) {
         if (driverID == null) {
             return "None";
         } else {
             var driver = userService.getUser(driverID).$loaded(function(driver) {
-            $scope.driver = driver;
+                $scope.driver = driver;
             });
         return $scope.driver.name;
         }
