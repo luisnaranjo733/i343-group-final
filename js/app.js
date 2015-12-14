@@ -319,6 +319,29 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 }])
 .controller('homeController', ['$scope', '$rootScope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', 'alertService', function($scope, $rootScope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state, alertService){
 
+    $rootScope.directions = ['to', 'from'];
+    $rootScope.days = ["mon", "tues", "wed", "thurs", "fri"];
+    $rootScope.currentUser.$loaded(function(user) {
+
+        $rootScope.testDrivers = {};
+        angular.forEach($rootScope.directions, function(direction, directionKey){
+            console.log($rootScope.currentUser.riderTimes);
+            if($rootScope.currentUser.riderTimes[direction]){
+                $rootScope.testDrivers[direction] = {};
+                angular.forEach($rootScope.days, function(day, dayKey){
+                    if ($rootScope.currentUser.riderTimes[direction][day].driver) {
+                        $rootScope.testDrivers[direction][day] = {};
+                        $rootScope.testDrivers[direction][day].driver = userService.getUser($rootScope.currentUser.riderTimes[direction][day].driver).$loaded(function(driver) {
+                            return driver;
+                        });
+                        console.log($rootScope.testDrivers);
+                    }
+                })
+            }
+        });
+
+    });
+
     $scope.toggleDriverView = function() {
         $state.go('Home.Drivers')
     }
@@ -439,7 +462,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                         uid: user.$id,
                                         direction: direction,
                                         time: time,
-                                        exactTime: exactTime 
+                                        exactTime: exactTime
                                     }
                                     $rootScope.currentUser.car.riders[direction][time].push(rider_time_obj);
                                     $rootScope.messages.modal.mType = "success";
@@ -539,15 +562,6 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             $rootScope.currentUser.$save();
         });
     }
-
-
-    $rootScope.directions = ['to', 'from'];
-    $rootScope.days = ["mon", "tues", "wed", "thurs", "fri"];
-
-    $rootScope.Sorted = function(time) {
-    console.log("time");
-    return $scope.dateOrders.indexOf(time)
-    };
 
     $rootScope.getTime = function (time) {
         if(time == null) {
@@ -653,10 +667,10 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                     feature_info_displayed = true
                     circle.openPopup()
                 }
-                
+
             })
             map.on('mouseout', function() {
-                circle.closePopup()     
+                circle.closePopup()
             })
             circle.on('popupclose', function() {
                 circle.unbindPopup()
@@ -692,15 +706,15 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                         };
                         // console.log(JSON.stringify(user.riderTimes.MonAM))
                         var marker;
-                        console.log(user.$id)
-                        console.log($rootScope.currentUser.$id)
+                        // console.log(user.$id)
+                        // console.log($rootScope.currentUser.$id)
                         if (user.$id == $rootScope.currentUser.$id) {
-                            console.log('darkred')
+                            // console.log('darkred')
                             var ourMarker = L.AwesomeMarkers.icon({icon: 'home', markerColor: 'darkred'});
                             marker = L.marker([user.lat, user.lng], {opacity: 0.6, icon: ourMarker});
                             $rootScope.homeMarker = marker;
                         } else {
-                            console.log('darkblue')
+                            // console.log('darkblue')
                             var othersMarker = L.AwesomeMarkers.icon({icon: 'user', markerColor: 'darkblue'});
                             marker = L.marker([user.lat, user.lng], {opacity: 0.6, icon: othersMarker});
                         }
@@ -716,7 +730,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
                             $scope.$apply(function(){
                                 $rootScope.modalUser = e.target.user;
-                                console.log($scope.modalUser);
+                                // console.log($scope.modalUser);
                                 // document.getElementById("myModal").modal()
 
                                 // $scope.items = ['output'];
@@ -793,9 +807,15 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     $scope.editSchedule = !$scope.user.scheduled;
     $scope.AM = {'6:30': 630, '6:45': 645, '7:00': 700, '7:15': 715, '7:30': 730, '7:45': 745, '8:00': 800, '8:15': 815, '8:30': 830, '8:45': 845, '9:00': 900, '9:15': 915, '9:30': 930, '9:45': 945, '10:00': 1000, '10:15': 1015, '10:30': 1030, '10:45': 1045, '11:00': 1100};
     $scope.PM = {'12:00': 1200, '12:15': 1215, '12:30':1230 , '12:45': 1245, '1:00': 1300, '1:15': 1315, '1:30': 1330, '1:45': 1345, '2:00': 1400, '2:15': 1415, '2:30': 1430, '2:45': 1445, '3:00': 1500, '3:15': 1515, '3:30': 1530, '3:45': 1545, '4:00': 1600, '4:15': 1615, '4:30': 1630};
-    $scope.monToDriver = $scope.getDriver($scope.user.riderTimes.to.mon.driver);
-    $scope.test = $scope.getTime(400);
-    console.log($scope.test);
+
+
+    // $scope.monToDriver = $scope.getDriver($scope.user.riderTimes.to.mon.driver);
+    // $scope.test = $scope.getTime(400);
+    // console.log($scope.test);
+    //
+    // LIAM TESTING
+
+
 
     $scope.updateSchedule = function () {
         var user = userService.getUser(authData.uid).$loaded(function(user) {

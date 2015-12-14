@@ -5,33 +5,41 @@
     <button type="button" class="btn btn-info right"  ng-click="editSchedule = editSchedule === false ? true: false"><i class="fa fa-cog"></i>  Edit Schedule</button>
     <h2>Current Pick-Up Times</h2>
     <p> Showing Schedule for: {{user.name}} <p>
+
+
    	<table class="table">
         <tr>
             <th>Monday</th>
- 	        <th>Tuesday</th>
+ 	 <th>Tuesday</th>
             <th>Wednesday</th>
             <th>Thursday</th>
             <th>Friday</th>
         </tr>
         <tr>
-            <td>{{getTime(user.riderTimes.to.mon.time)}}
-                <br>Driver: {{monToDriver}}</td>
-            <td>{{getTime(user.riderTimes.to.tues.time)}}</td>
+            <td ng-repeat="day in $root.days">
+                {{getTime(user.riderTimes.to[day].time)}}
+                <div ng-show="testDrivers.to[day].driver">
+                    <br>Driver: {{$root.testDrivers.to[day].driver.$$state.value.name}}
+                </div>
+
+            </td>
+<!--             <td>{{getTime(user.riderTimes.to.tues.time)}}</td>
             <td>{{getTime(user.riderTimes.to.wed.time)}}
                 <br>Driver:</td>
             <td>{{getTime(user.riderTimes.to.thurs.time)}}</td>
-            <td>{{getTime(user.riderTimes.to.fri.time)}}</td>
+            <td>{{getTime(user.riderTimes.to.fri.time)}}</td> -->
         </tr>
         <tr>
-            <td>{{getTime(user.riderTimes.from.mon.time)}}</td>
-            <td>{{getTime(user.riderTimes.from.tues.time)}}</td>
-            <td>{{getTime(user.riderTimes.from.wed.time)}}</td>
-            <td>{{getTime(user.riderTimes.from.thurs.time)}}</td>
-            <td>{{getTime(user.riderTimes.from.fri.time)}}</td>
+            <td ng-repeat="day in $root.days">
+                {{getTime(user.riderTimes.from[day].time)}}
+                <div ng-show="testDrivers.from[day].driver">
+                    <br>Driver: {{testDrivers.from[day].driver.$$state.value.name}}
+                </div>
+
+            </td>
         </tr>
     </table>
 </span>
-
 <!-- Show if editing -->
 <span ng-show="editSchedule">
     <p ng-show="user.scheduled = false">***Looks like we don't have a schedule on file for you. If you are a Driver, please click above to return to the Driver tab. If you are looking for a carpool, please fill out your schedule below.***</p>
