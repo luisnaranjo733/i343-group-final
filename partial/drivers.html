@@ -31,42 +31,48 @@
             <input type="submit" class="btn btn-primary btn-block" value="Create"></input>
         </form>
     </div>
+
     <div ng-show="$root.currentUser.car">
-        <h5><b>Your Car: </b>{{$root.currentUser.car.model}}</h5>
-        <p><b>Seats: </b>{{$root.currentUser.car.seats}}</p>
-        <p><b>Description: </b>{{$root.currentUser.car.desc}}</p>
+        <button type="button" class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Toggle car information</button>
+        <div uib-collapse="isCollapsed" ng-init="isCollapsed=true">
+            <h5><b>Your Car: </b>{{$root.currentUser.car.model}}</h5>
+            <p><b>Seats: </b>{{$root.currentUser.car.seats}}</p>
+            <p><b>Description: </b>{{$root.currentUser.car.desc}}</p>
 
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Day:</th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Number of AM Riders:</td>
-                        <td ng-repeat="day in $root.days">
-                            <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.to[day].length" ng-click="openDriverDaySummaryModal(day, 'to')">
-                                {{ $root.currentUser.car.riders.to[day].length || 0 }}
-                            </button>
 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Number of PM Riders:</td>
-                        <td ng-repeat="day in $root.days">
-                            <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.from[day].length" ng-click="openDriverDaySummaryModal(day, 'from')">{{ $root.currentUser.car.riders.from[day].length || 0 }}</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Day:</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Number of AM Riders:</td>
+                            <td ng-repeat="day in $root.days">
+                                <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.to[day].length" ng-click="openDriverDaySummaryModal(day, 'to')">
+                                    {{ $root.currentUser.car.riders.to[day].length || 0 }}
+                                </button>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Number of PM Riders:</td>
+                            <td ng-repeat="day in $root.days">
+                                <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.from[day].length" ng-click="openDriverDaySummaryModal(day, 'from')">{{ $root.currentUser.car.riders.from[day].length || 0 }}</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
 
         <!-- <input type='number' ng-model="pickUpRadius" ng-change="update_radius()"></input> -->
         <h4>Change Your Pick-Up Zone Radius:</h4>

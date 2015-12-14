@@ -613,6 +613,18 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
+            circle.bindPopup("<h2>Check it out!</h2><h4>You can drag this circle around to reposition it, or you can adjust the slider to change its radius</h4><h4>When you refresh the page, this circle will be right where you left it!</h4>");
+            var feature_info_displayed = false
+            map.on('mouseover', function() {
+                if (!feature_info_displayed) {
+                    feature_info_displayed = true
+                    circle.openPopup()
+                }
+                
+            })
+            map.on('mouseout', function() {
+                circle.closePopup()     
+            })
 
             // load made up markers for development
             // $http.get('data/marker_coordinates.json').then(function(response) {
@@ -644,10 +656,15 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                         };
                         // console.log(JSON.stringify(user.riderTimes.MonAM))
                         var marker;
+                        console.log(user.$id)
+                        console.log($rootScope.currentUser.$id)
                         if (user.$id == $rootScope.currentUser.$id) {
+                            console.log('darkred')
                             var ourMarker = L.AwesomeMarkers.icon({icon: 'home', markerColor: 'darkred'});
                             marker = L.marker([user.lat, user.lng], {opacity: 0.6, icon: ourMarker});
+                            $rootScope.homeMarker = marker;
                         } else {
+                            console.log('darkblue')
                             var othersMarker = L.AwesomeMarkers.icon({icon: 'user', markerColor: 'darkblue'});
                             marker = L.marker([user.lat, user.lng], {opacity: 0.6, icon: othersMarker});
                         }
@@ -700,7 +717,9 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             circle.on('mousedown', function(mousedown_event) {
                 map.on('mousemove', function(mousemove_event) {
                     circle.setLatLng(mousemove_event.latlng);
-
+                    if ($rootScope.homeMarker) {
+                        $rootScope.homeMarker.setLatLng(mousemove_event.latlng)
+                    }
 
                     // highlights markers within radius of circle
                     // dims all others
@@ -720,6 +739,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                     user.lat = mousemove_event.latlng.lat;
                     user.lng = mousemove_event.latlng.lng;
                     user.$save();
+
                 }
             })
 
