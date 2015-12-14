@@ -324,22 +324,23 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     $rootScope.currentUser.$loaded(function(user) {
 
         $rootScope.testDrivers = {};
-        angular.forEach($rootScope.directions, function(direction, directionKey){
-            console.log($rootScope.currentUser.riderTimes);
-            if($rootScope.currentUser.riderTimes[direction]){
-                $rootScope.testDrivers[direction] = {};
-                angular.forEach($rootScope.days, function(day, dayKey){
-                    if ($rootScope.currentUser.riderTimes[direction][day].driver) {
-                        $rootScope.testDrivers[direction][day] = {};
-                        $rootScope.testDrivers[direction][day].driver = userService.getUser($rootScope.currentUser.riderTimes[direction][day].driver).$loaded(function(driver) {
-                            return driver;
-                        });
-                        console.log($rootScope.testDrivers);
-                    }
-                })
-            }
-        });
-
+        if($rootScope.currentUser.riderTimes) {
+            angular.forEach($rootScope.directions, function(direction, directionKey){
+                console.log($rootScope.currentUser.riderTimes);
+                if($rootScope.currentUser.riderTimes[direction]){
+                    $rootScope.testDrivers[direction] = {};
+                    angular.forEach($rootScope.days, function(day, dayKey){
+                        if ($rootScope.currentUser.riderTimes[direction][day].driver) {
+                            $rootScope.testDrivers[direction][day] = {};
+                            $rootScope.testDrivers[direction][day].driver = userService.getUser($rootScope.currentUser.riderTimes[direction][day].driver).$loaded(function(driver) {
+                                return driver;
+                            });
+                            console.log($rootScope.testDrivers);
+                        }
+                    })
+                }
+            });
+        }
     });
 
     $scope.toggleDriverView = function() {
