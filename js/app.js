@@ -633,50 +633,54 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             // find users looking for a rider
             // add them to the map
             users.$loaded().then(function(user){
-                $http.get('partial/mustache/driver_marker.html').then(function(response) {
-                    var template = response.data;
 
-                    user.forEach(function(user, id) {
-                        var riderTimes = user.riderTimes;
-                        // if riderTimes defined
-                        // this is a rider who is
-                        // requesting a driver
-                        if (riderTimes) {
-                            var template_scope = {
-                                user: user
-                            };
-                            // console.log(JSON.stringify(user.riderTimes.MonAM))
-                            var marker = L.marker([user.lat, user.lng], {opacity: 0.6});
+                user.forEach(function(user, id) {
+                    var riderTimes = user.riderTimes;
+                    // if riderTimes defined
+                    // this is a rider who is
+                    // requesting a driver
+                    if (riderTimes) {
+                        var template_scope = {
+                            user: user
+                        };
+                        // console.log(JSON.stringify(user.riderTimes.MonAM))
+                        var marker;
+                        if (user.$id == $rootScope.currentUser.$id) {
+                            var ourMarker = L.AwesomeMarkers.icon({icon: 'home', markerColor: 'darkred'});
+                            marker = L.marker([user.lat, user.lng], {opacity: 0.6, icon: ourMarker});
+                        } else {
+                            var othersMarker = L.AwesomeMarkers.icon({icon: 'user', markerColor: 'darkblue'});
+                            marker = L.marker([user.lat, user.lng], {opacity: 0.6, icon: othersMarker});
+                        }
 
-                            // var output = Mustache.render(template, template_scope);
-                            // marker.bindPopup(output).openPopup();
+                        // var output = Mustache.render(template, template_scope);
+                        // marker.bindPopup(output).openPopup();
 
-                            marker.user = user;
+                        marker.user = user;
 
-                            marker.addTo(rider_markers);
+                        marker.addTo(rider_markers);
 
-                            marker.on('click', function(e){
+                        marker.on('click', function(e){
 
-                                $scope.$apply(function(){
-                                    $rootScope.modalUser = e.target.user;
-                                    console.log($scope.modalUser);
-                                    // document.getElementById("myModal").modal()
+                            $scope.$apply(function(){
+                                $rootScope.modalUser = e.target.user;
+                                console.log($scope.modalUser);
+                                // document.getElementById("myModal").modal()
 
-                                    // $scope.items = ['output'];
-                                    var modal = $uibModal.open({
-                                          animation: $scope.animationsEnabled,
-                                          templateUrl: 'driverModal.html',
-                                          size: "lg",
-                                          resolve: {
-                                            items: function () {
-                                              return $scope.items;
-                                            }
-                                          }
-                                    });
-                                })
-                            }
-                        )}
-                    });
+                                // $scope.items = ['output'];
+                                var modal = $uibModal.open({
+                                      animation: $scope.animationsEnabled,
+                                      templateUrl: 'driverModal.html',
+                                      size: "lg",
+                                      resolve: {
+                                        items: function () {
+                                          return $scope.items;
+                                        }
+                                      }
+                                });
+                            })
+                        }
+                    )}
                     rider_markers.addTo(map);
                     filter_markers(circle);
 
