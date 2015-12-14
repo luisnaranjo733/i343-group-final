@@ -1,6 +1,5 @@
 <div id="drivers">
     <h1>Driver</h1>
-    <button type="button" class="btn btn-primary" ng-click="addTestAlert()">Add alert</button>
     <div ng-hide="$root.currentUser.car" id="createCar">
         <h3>Create your car</h3>
         <form name="createCarForm" ng-submit="createCarForm.$valid && createCar()" novalidate>
@@ -53,13 +52,16 @@
                     <tr>
                         <td>Number of AM Riders:</td>
                         <td ng-repeat="day in $root.days">
-                            {{ $root.currentUser.car.riders.to[day].length || 0 }}
+                            <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.to[day].length" ng-click="openDriverDaySummaryModal(day, 'to')">
+                                {{ $root.currentUser.car.riders.to[day].length || 0 }}
+                            </button>
+
                         </td>
                     </tr>
                     <tr>
                         <td>Number of PM Riders:</td>
                         <td ng-repeat="day in $root.days">
-                            {{ $root.currentUser.car.riders.from[day].length || 0 }}
+                            <button type="button" class="btn btn-primary" ng-disabled="!$root.currentUser.car.riders.from[day].length" ng-click="openDriverDaySummaryModal(day, 'from')">{{ $root.currentUser.car.riders.from[day].length || 0 }}</button>
                         </td>
                     </tr>
                 </tbody>
@@ -81,7 +83,30 @@
 
 </div>
 
+<script type="text/ng-template" id="driverDaySummary.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{ direction }} carpool summary for {{ day }}</h3>
+    </div>
+    <div class="modal-body">
+        <h3>Riders to pick up today: {{ summaryRiders.length }}</h3>
 
+        <ul>
+            <li ng-repeat="rider in summaryRiders">
+                {{ rider.name }}
+                <ul>
+                    <li>Email: {{ rider.email }}</li>
+                    <li>Phone: {{ rider.phone }}</li>
+                    <li>Lat: {{ rider.lat }}</li>
+                    <li>Lng: {{ rider.lng }}</li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" type="button" ng-click="$close()">Close</button>
+    </div>
+</script>
 
 
 <script type="text/ng-template" id="driverModal.html">
