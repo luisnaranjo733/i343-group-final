@@ -658,6 +658,9 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
             map.on('mouseout', function() {
                 circle.closePopup()     
             })
+            circle.on('popupclose', function() {
+                circle.unbindPopup()
+            })
 
             // load made up markers for development
             // $http.get('data/marker_coordinates.json').then(function(response) {
