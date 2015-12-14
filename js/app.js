@@ -353,13 +353,20 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                     if (user.car.riders[direction]) {
                         var ridesInThisDirection = user.car.riders[direction];
                         if (ridesInThisDirection[day]) {
-                            var rider_uids = user.car.riders[direction][day]
-                            console.log(rider_uids)
-                            rider_uids.forEach(function(uid) {
-                                userService.getUser(uid).$loaded(function(user) {
-                                    console.log(user)
+                            // var rider_uids = user.car.riders[direction][day]
+                            // console.log(rider_uids)
+                            // rider_uids.forEach(function(uid) {
+                            //     userService.getUser(uid).$loaded(function(user) {
+                            //         console.log(user)
+                            //         $rootScope.summaryRiders.push(user)
+                            //     })
+                            // })
+                            var rider_time_objects = user.car.riders[direction][day]
+                            rider_time_objects.forEach(function(rider_time_obj) {
+                                userService.getUser(rider_time_obj.uid).$loaded(function(user) {
+                                    user.rider_time_obj = rider_time_obj
                                     $rootScope.summaryRiders.push(user)
-                                })
+                                });
                             })
                         }
                     }
@@ -401,8 +408,10 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     }
     $scope.initMessages();
 
-    $rootScope.addUserToCar = function(id, time, direction) {
+    $rootScope.addUserToCar = function(id, time, direction, exactTime) {
         console.log("fired");
+        console.log(exactTime)
+        console.log('extra')
         user = userService.getUser(id).$loaded(function(user) {
             $timeout(function() {
               var thisTime = user.riderTimes[direction][time];
@@ -429,7 +438,8 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                     var rider_time_obj = {
                                         uid: user.$id,
                                         direction: direction,
-                                        time: time
+                                        time: time,
+                                        exactTime: exactTime 
                                     }
                                     $rootScope.currentUser.car.riders[direction][time].push(rider_time_obj);
                                     $rootScope.messages.modal.mType = "success";
@@ -451,7 +461,8 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                             var rider_time_obj = {
                                 uid: user.$id,
                                 direction: direction,
-                                time: time
+                                time: time,
+                                exactTime: exactTime
                             }
                             $rootScope.currentUser.car.riders[direction][time] = [rider_time_obj];
                             $rootScope.messages.modal.mType = "success";
@@ -466,7 +477,8 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                         var rider_time_obj = {
                             uid: user.$id,
                             direction: direction,
-                            time: time
+                            time: time,
+                            exactTime: exactTime
                         }
                         $rootScope.messages.modal.mType = "success";
                         $rootScope.messages.modal.message = user.name + " was added succesfully.";
@@ -493,7 +505,8 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                         var rider_time_obj = {
                             uid: user.$id,
                             direction: direction,
-                            time: time
+                            time: time,
+                            exactTime: exactTime
                         }
                       $rootScope.currentUser.car.riders = {};
                       $rootScope.currentUser.car.riders[direction] = {};
