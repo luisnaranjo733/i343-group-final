@@ -426,7 +426,12 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                 return;
                             } else {
                                 if($rootScope.currentUser.car.riders[direction][time].indexOf(user.$id) == -1) {
-                                    $rootScope.currentUser.car.riders[direction][time].push(user.$id);
+                                    var rider_time_obj = {
+                                        uid: user.$id,
+                                        direction: direction,
+                                        time: time
+                                    }
+                                    $rootScope.currentUser.car.riders[direction][time].push(rider_time_obj);
                                     $rootScope.messages.modal.mType = "success";
                                     $rootScope.messages.modal.message = user.name + " was added succesfully.";
 
@@ -443,7 +448,12 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                 }
                             }
                         } else {
-                            $rootScope.currentUser.car.riders[direction][time] = [user.$id];
+                            var rider_time_obj = {
+                                uid: user.$id,
+                                direction: direction,
+                                time: time
+                            }
+                            $rootScope.currentUser.car.riders[direction][time] = [rider_time_obj];
                             $rootScope.messages.modal.mType = "success";
                             $rootScope.messages.modal.message = user.name + " was added succesfully.";
 
@@ -453,11 +463,16 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
                         }
                     } else {
+                        var rider_time_obj = {
+                            uid: user.$id,
+                            direction: direction,
+                            time: time
+                        }
                         $rootScope.messages.modal.mType = "success";
                         $rootScope.messages.modal.message = user.name + " was added succesfully.";
                         console.log("creating new direction array");
                         $rootScope.currentUser.car.riders[direction] = {};
-                        $rootScope.currentUser.car.riders[direction][time] = [user.$id];
+                        $rootScope.currentUser.car.riders[direction][time] = [rider_time_obj];
 
 
                         var alertMessage = "you have been added to " + $rootScope.currentUser.name + "'s car going " + direction + " school on " + time + " at " + $scope.getTime(user.riderTimes[direction][time].time);
@@ -475,9 +490,14 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                       alertService.saveAlert(user.$id, alertMessage, "success");
 
                       console.log("creating new riders array");
+                        var rider_time_obj = {
+                            uid: user.$id,
+                            direction: direction,
+                            time: time
+                        }
                       $rootScope.currentUser.car.riders = {};
                       $rootScope.currentUser.car.riders[direction] = {};
-                      $rootScope.currentUser.car.riders[direction][time] = [user.$id];
+                      $rootScope.currentUser.car.riders[direction][time] = [rider_time_obj];
                   }
 
                   thisTime.driver = $rootScope.currentUser.$id;
