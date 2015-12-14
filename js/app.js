@@ -408,7 +408,6 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
               var thisTime = user.riderTimes[direction][time];
               // var thisCar = $rootScope.currentUser.car.riders[direction][time];
 
-
               if (thisTime.driver) {
                   $rootScope.messages.modal.mType = "error";
                   console.log($rootScope.messages.modal.mType);
@@ -426,7 +425,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                 console.log("car is Full");
                                 return;
                             } else {
-                                if($rootScope.currentUser.car.riders[direction][time].indexOf(user.$id) > -1) {
+                                if($rootScope.currentUser.car.riders[direction][time].indexOf(user.$id) == -1) {
                                     $rootScope.currentUser.car.riders[direction][time].push(user.$id);
                                     $rootScope.messages.modal.mType = "success";
                                     $rootScope.messages.modal.message = user.name + " was added succesfully.";
