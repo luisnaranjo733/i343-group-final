@@ -63,10 +63,10 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
                 if (!alert.displayed) {
                     $rootScope.alerts.push(alert);
                     alert.displayed =  true;
-                    user.$save();                
+                    user.$save();
                 }
 
-            })            
+            })
         } else {
             console.log('no unseen alerts')
         }
@@ -86,15 +86,17 @@ carpoolApp.factory('userService', function($firebaseArray, $firebaseObject, FIRE
             $rootScope.alerts.push(alert);
             alert.displayed = true;
         // if alert for another user, save to firebase
+        } else {
+            userService.getUser(uid).$loaded(function(user) {
+                if (user.alerts) {
+                    user.alerts.push(alert);
+                } else {
+                    user.alerts = [alert];
+                }
+                user.$save();
+            })
         }
-        userService.getUser(uid).$loaded(function(user) {
-            if (user.alerts) {
-                user.alerts.push(alert);
-            } else {
-                user.alerts = [alert];
-            }
-            user.$save();
-        })  
+
 
     }
     $rootScope.saveAlert = alertService.saveAlert;
@@ -325,10 +327,10 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     $rootScope.currentUser.$loaded(function(user) {
         alertService.loadPendingAlerts(user)
     })
-    
+
 
 }])
-.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout){
+.controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', 'alertService', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout, alertService){
 
     $scope.addTestAlert = function() {
         // get uid of current user
@@ -396,6 +398,11 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                     $rootScope.currentUser.car.riders[direction][time].push(user.$id);
                                     $rootScope.messages.modal.mType = "success";
                                     $rootScope.messages.modal.message = user.name + " was added succesfully.";
+
+                                    var alertMessage = "you have been added to " + $rootScope.currentUser.name + "'s car going " + direction + " school on " + time + " at " + $scope.getTime(user.riderTimes[direction][time].time);
+                                    alertService.saveAlert(user.$id, alertMessage, "success");
+
+
                                 } else {
                                     console.log($rootScope.messages);
                                     $rootScope.messages.modal.mType = "error";
@@ -408,6 +415,11 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                             $rootScope.currentUser.car.riders[direction][time] = [user.$id];
                             $rootScope.messages.modal.mType = "success";
                             $rootScope.messages.modal.message = user.name + " was added succesfully.";
+
+                            var alertMessage = "you have been added to " + $rootScope.currentUser.name + "'s car going " + direction + " school on " + time + " at " + $scope.getTime(user.riderTimes[direction][time].time);
+                            alertService.saveAlert(user.$id, alertMessage, "success");
+
+
                         }
                     } else {
                         $rootScope.messages.modal.mType = "success";
@@ -415,11 +427,22 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                         console.log("creating new direction array");
                         $rootScope.currentUser.car.riders[direction] = {};
                         $rootScope.currentUser.car.riders[direction][time] = [user.$id];
+
+
+                        var alertMessage = "you have been added to " + $rootScope.currentUser.name + "'s car going " + direction + " school on " + time + " at " + $scope.getTime(user.riderTimes[direction][time].time);
+                        alertService.saveAlert(user.$id, alertMessage, "success");
+
+
                     }
 
                   } else {
                       $rootScope.messages.modal.mType = "success";
                       $rootScope.messages.modal.message = user.name + " was added succesfully.";
+
+
+                      var alertMessage = "you have been added to " + $rootScope.currentUser.name + "'s car going " + direction + " school on " + time + " at " + $scope.getTime(user.riderTimes[direction][time].time);
+                      alertService.saveAlert(user.$id, alertMessage, "success");
+
                       console.log("creating new riders array");
                       $rootScope.currentUser.car.riders = {};
                       $rootScope.currentUser.car.riders[direction] = {};
@@ -444,6 +467,10 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
             $rootScope.messages.modal.mType = "success";
             $rootScope.messages.modal.message = user.name + " was removed succesfully.";
+
+            var alertMessage = "you have been removed from " + $rootScope.currentUser.name + "'s car going " + direction + " school on " + time + " at " + $scope.getTime(user.riderTimes[direction][time].time);
+                                    alertService.saveAlert(user.$id, alertMessage, "warning");
+
             user.$save();
             $rootScope.currentUser.$save();
         });
@@ -457,6 +484,27 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
     console.log("time");
     return $scope.dateOrders.indexOf(time)
     };
+
+    $rootScope.getTime = function (time) {
+        if(time == null) {
+            return "None";
+        } else {
+            var split = "";
+            var hold = "";
+            if (time >= 1200) {
+                split = 'PM';
+            } else {
+                split = 'AM';
+            }
+            if (time >= 1300) {
+                time = time - 1200;
+            }
+            time = time.toString();
+            hold = time.substring(0,time.length-2) + ":";
+            hold = hold + time.substring(time.length-2,time.length) + " " + split;
+            return hold;
+        }
+    }
 
 
     var slider = new Slider('#ex1', {

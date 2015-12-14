@@ -106,37 +106,40 @@
                 </tr>
                 <tr>
                     <td ng-repeat="day in $root.days">
-                        <p><b>{{day}}AM</b> : {{$root.modalUser.riderTimes.to[day].time}}</p>
 
-                        <div ng-show="!$root.modalUser.riderTimes.to[day].driver || $root.modalUser.riderTimes.to[day].driver == $root.currentUser.$id">
+                        <div ng-show="$root.modalUser.riderTimes.to[day]">
+                            <p>{{$root.getTime($root.modalUser.riderTimes.to[day].time)}}</p>
 
-                        <button ng-show="$root.modalUser.riderTimes.to[day].driver !== $root.currentUser.$id" class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, day, 'to')"><i class="fa fa-plus"></i></button>
-                        <button ng-show="$root.modalUser.riderTimes.to[day].driver == $root.currentUser.$id" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'to')"><i class="fa fa-minus"></i></button>
+                            <button ng-show="!$root.modalUser.riderTimes.to[day].driver" class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, day, 'to')"><i class="fa fa-plus"></i></button>
+
+                            <button ng-show="$root.modalUser.riderTimes.to[day].driver == $root.currentUser.$id" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'to')"><i class="fa fa-minus"></i></button>
+
+                            <button disabled="disabled" ng-show="$root.modalUser.riderTimes.to[day].driver !== $root.currentUser.$id && $root.modalUser.riderTimes.to[day].driver" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'from')"><i class="fa fa-check"></i></button>
                         </div>
 
-                        <div ng-show="$root.modalUser.riderTimes.to[day].driver && $root.modalUser.riderTimes.to[day].driver != $root.currentUser.$id">
-                        
-                            <button disabled="disabled" ng-show="$root.modalUser.riderTimes.to[day].driver" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'to')"><i class="fa fa-check"></i></button>
+                        <div ng-show="!$root.modalUser.riderTimes.to[day]">
+                            <p>No pickup time</p>
                         </div>
 
                     </td>
                 </tr>
                 <tr>
                     <td ng-repeat="day in $root.days">
-                        <p><b>{{day}}PM</b> : {{$root.modalUser.riderTimes.from[day].time}}</p>
 
-                        <div ng-show="!$root.modalUser.riderTimes.from[day].driver || $root.modalUser.riderTimes.from[day].driver == $root.currentUser.$id">
-                        
-                        <button ng-show="$root.modalUser.riderTimes.from[day].driver !== $root.currentUser.$id" class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, day, 'from')"><i class="fa fa-plus"></i></button>
-                        <button ng-show="$root.modalUser.riderTimes.from[day].driver == $root.currentUser.$id" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'from')"><i class="fa fa-minus"></i></button>
+                        <div ng-show="$root.modalUser.riderTimes.from[day]">
+                            <p>{{$root.getTime($root.modalUser.riderTimes.from[day].time)}}</p>
+
+                            <button ng-show="!$root.modalUser.riderTimes.from[day].driver" class="btn btn-primary" ng-click="$root.addUserToCar($root.modalUser.$id, day, 'from')"><i class="fa fa-plus"></i></button>
+
+                            <button ng-show="$root.modalUser.riderTimes.from[day].driver == $root.currentUser.$id" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'from')"><i class="fa fa-minus"></i></button>
+
+                            <button disabled="disabled" ng-show="$root.modalUser.riderTimes.from[day].driver !== $root.currentUser.$id && $root.modalUser.riderTimes.from[day].driver" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'from')"><i class="fa fa-check"></i></button>
                         </div>
 
-                        <div ng-show="$root.modalUser.riderTimes.from[day].driver && $root.modalUser.riderTimes.from[day].driver != $root.currentUser.$id">
-                        
-                            <button disabled="disabled" ng-show="$root.modalUser.riderTimes.from[day].driver" class="btn btn-primary" ng-click="$root.removeUserFromCar($root.modalUser.$id, day, 'from')"><i class="fa fa-check"></i></button>
+                        <div ng-show="!$root.modalUser.riderTimes.from[day]">
+                            <p>No pickup time</p>
                         </div>
 
-                        
                     </td>
                 </tr>
             </table>
