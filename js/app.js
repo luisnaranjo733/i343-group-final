@@ -614,7 +614,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
 
             var circle = L.circle([user.lat, user.lng], $scope.pickUpRadius * meters_miles_const).addTo(map);
-            circle.bindPopup("<h2>Check it out!</h2><h4>You can drag this circle around to reposition it, or you can adjust the slider to change its radius</h4><h4>When you refresh the page, this circle will be right where you left it!</h4>");
+            circle.bindPopup("<h2>Check it out!</h2><h4>You can drag this pick up zone around to reposition it, or you can adjust the slider to change its radius</h4><h4>When you refresh the page, this circle will be right where you left it!</h4>");
             var feature_info_displayed = false
             map.on('mouseover', function() {
                 if (!feature_info_displayed) {
