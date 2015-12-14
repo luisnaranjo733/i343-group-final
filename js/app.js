@@ -333,17 +333,46 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 }])
 .controller('driversController', ['$rootScope', '$scope', '$firebaseObject', '$uibModal', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', '$timeout', 'alertService', function($rootScope, $scope, $firebaseObject, $uibModal, FIREBASE_URI, userService, $http, $firebaseAuth, $state, $timeout, alertService){
 
-    $scope.addTestAlert = function() {
-        // get uid of current user
-        var uid = $rootScope.currentUser.$id;
-        // set explicit uid to test alerting another user
-        //uid = 'd3f930d5-fe3e-4054-9b43-d1d39cd9b750';
-        $rootScope.saveAlert(uid, 'test message', 'success');
+    $scope.openDriverDaySummaryModal = function(day, direction) {
+        $rootScope.day = day;
+        console.log(day)
+
+        if (direction === 'to') {
+            $rootScope.direction = 'Morning'
+        } else {
+            $rootScope.direction = 'Evening'
+        }
+
+        $rootScope.summaryRiders =  []
+        
+        $rootScope.currentUser.$loaded(function(user) {
+            if (user.car) {
+                if (user.car.riders) {
+                    if (user.car.riders[direction]) {
+                        var ridesInThisDirection = user.car.riders[direction];
+                        if (ridesInThisDirection[day]) {
+                            var rider_uids = user.car.riders[direction][day]
+                            console.log(rider_uids)
+                            rider_uids.forEach(function(uid) {
+                                userService.getUser(uid).$loaded(function(user) {
+                                    console.log(user)
+                                    $rootScope.summaryRiders.push(user)
+                                })
+                            })
+                        }
+                    }
+                }
+            }
+        })
+
+        var modal = $uibModal.open({
+              animation: $scope.animationsEnabled,
+              templateUrl: 'driverDaySummary.html',
+              size: "lg"
+        });
     }
 
-    //LIAM WORK
-    //
-    //
+    
     $scope.createCar = function() {
         console.log($scope.car);
         $rootScope.currentUser.car = $scope.car;
@@ -399,7 +428,6 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                     $rootScope.currentUser.car.riders[direction][time].push(user.$id);
                                     $rootScope.messages.modal.mType = "success";
                                     $rootScope.messages.modal.message = user.name + " was added succesfully.";
-                                    alertService.saveAlert($rootScope.currentUser.$id, 'user.name + " was added succesfully.', 'success')
                                 } else {
                                     console.log($rootScope.messages);
                                     $rootScope.messages.modal.mType = "error";
