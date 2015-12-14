@@ -14,9 +14,11 @@
             <th>Friday</th>
         </tr>
         <tr>
-            <td>{{getTime(user.riderTimes.to.mon.time)}}</td>
+            <td>{{getTime(user.riderTimes.to.mon.time)}}
+                <br>Driver: {{getDriver(user.riderTimes.to.mon.driver)}}</td>
             <td>{{getTime(user.riderTimes.to.tues.time)}}</td>
-            <td>{{getTime(user.riderTimes.to.wed.time)}}</td>
+            <td>{{getTime(user.riderTimes.to.wed.time)}}
+                <br>Driver: {{getDriver(user.riderTimes.to.wed.driver)}}</td>
             <td>{{getTime(user.riderTimes.to.thurs.time)}}</td>
             <td>{{getTime(user.riderTimes.to.fri.time)}}</td>
         </tr>
