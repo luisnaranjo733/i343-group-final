@@ -20,20 +20,17 @@
                 {{getTime(user.riderTimes.to[day].time)}}
                 <div ng-show="testDrivers.to[day].driver">
                     <br>Driver: {{$root.testDrivers.to[day].driver.$$state.value.name}}
+                    <br>Phone: {{$root.testDrivers.to[day].driver.$$state.value.phone}}
                 </div>
 
             </td>
-<!--             <td>{{getTime(user.riderTimes.to.tues.time)}}</td>
-            <td>{{getTime(user.riderTimes.to.wed.time)}}
-                <br>Driver:</td>
-            <td>{{getTime(user.riderTimes.to.thurs.time)}}</td>
-            <td>{{getTime(user.riderTimes.to.fri.time)}}</td> -->
         </tr>
         <tr>
             <td ng-repeat="day in $root.days">
                 {{getTime(user.riderTimes.from[day].time)}}
                 <div ng-show="testDrivers.from[day].driver">
-                    <br>Driver: {{testDrivers.from[day].driver.$$state.value.name}}
+                    <br>Driver: {{testDrivers.from[day].driver.$$state.value.name}} 
+                    <br>Phone: {{$root.testDrivers.from[day].driver.$$state.value.phone}}
                 </div>
 
             </td>
@@ -47,7 +44,6 @@
     <p>Please make a selection from the drop down lists with your preferred departure time to and from school. If you do not require a ride on a day, please select None.</p>
     <table class="table">
         <tr>
-            <th>Time</th>
             <th>Monday</th>
             <th>Tuesday</th>
             <th>Wednesday</th>
@@ -55,6 +51,23 @@
             <th>Friday</th>
         </tr>
         <tr>
+            <td ng-repeat="day in $root.days">
+                <select ng-model="to[day]" name="to[day]" id="to[day]">
+                <option value="" selected>None</option>
+                <option ng-repeat="(optionName, optionValue) in AM" ng-value="optionValue">{{optionName}}</option>
+                </select> AM
+            </td>
+        </tr>
+        <tr>
+            <td ng-repeat="day in $root.days">
+                <select ng-model="from[day]" name="from[day]" id="from[day]">
+                <option value="" selected>None</option>
+                <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
+                </select> PM
+            </td>
+        </tr>
+
+<!--        <tr>
             <td>AM</td>
             <td><select ng-model="MonAM" name="MonAM" id="MonAM">
 	            <option value="" selected>None</option>
@@ -99,7 +112,8 @@
                 <option value="" selected>None</option>
                 <option ng-repeat="(optionName, optionValue) in PM" ng-value="optionValue">{{optionName}}</option>
                 </select></td>
-        </tr>
+        </tr> -->
+
     </table>
     <button type="submit" class="btn btn-primary" ng-click="updateSchedule()">Update Schedule</button>
     <button type="submit" class="btn btn-warning" ng-show="scheduled = true" ng-click="editSchedule = editSchedule === false ? true: false;">Cancel</button>
