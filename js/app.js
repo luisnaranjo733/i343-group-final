@@ -326,7 +326,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         $rootScope.testDrivers = {};
         if($rootScope.currentUser.riderTimes) {
             angular.forEach($rootScope.directions, function(direction, directionKey){
-                console.log($rootScope.currentUser.riderTimes);
+                // console.log($rootScope.currentUser.riderTimes);
                 if($rootScope.currentUser.riderTimes[direction]){
                     $rootScope.testDrivers[direction] = {};
                     angular.forEach($rootScope.days, function(day, dayKey){
@@ -336,7 +336,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                 $rootScope.testDrivers[direction][day].driver = userService.getUser($rootScope.currentUser.riderTimes[direction][day].driver).$loaded(function(driver) {
                                     return driver;
                                 });
-                                console.log($rootScope.testDrivers);
+                                // console.log($rootScope.testDrivers);
                             }
                         }
                     })
@@ -363,7 +363,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
 
     $scope.openDriverDaySummaryModal = function(day, direction) {
         $rootScope.day = day;
-        console.log(day)
+        // console.log(day)
 
         if (direction === 'to') {
             $rootScope.direction = 'Morning'
@@ -800,7 +800,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         });
     }
 }])
-.controller('ridersController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state) {
+.controller('ridersController', ['$rootScope', '$scope', '$firebaseObject', 'FIREBASE_URI', 'userService', '$http', '$firebaseAuth', '$state', 'alertService', function($rootScope, $scope, $firebaseObject, FIREBASE_URI, userService, $http, $firebaseAuth, $state, alertService) {
 /*    var ref = new Firebase(FIREBASE_URI);
     $scope.authObj = $firebaseAuth(ref);
     var authData = $scope.authObj.$getAuth();
@@ -815,15 +815,62 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
         $rootScope.currentUser.$loaded(function(user) {
             $scope.editSchedule = $scope.editSchedule === false ? true: false;
             user.scheduled = true;
+            console.log($scope.to);
+            console.log($scope.from);
             angular.forEach($rootScope.directions, function(direction, directionKey){
-                angular.forEach($rootScope.days, function(day, dayKey){
-                    if($rootScope.currentUser.riderTimes[direction][day].driver) {
-                        console.log("Driver exists");
-                    }    
-                    $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime([direction][day].value);
-                })
+
+                if($scope[direction]) {
+                    console.log("found");
+                    console.log($scope[direction]);
+                    angular.forEach($rootScope.days, function(day, dayKey){
+                        if ($scope[direction][day]) {
+
+                            console.log("found");
+                            console.log($scope[direction][day]);
+                            if($rootScope.currentUser.riderTimes[direction]) {
+                                if($rootScope.currentUser.riderTimes[direction][day]) {
+                                    if($rootScope.currentUser.riderTimes[direction][day].driver) {
+                                        console.log("Driver exists");
+                                        var id = $rootScope.currentUser.riderTimes[direction][day].driver;
+                                        var user = userService.getUser(id).$loaded(function(user) {
+                                            var index = user.car.riders[direction][day].indexOf($rootScope.currentUser.$id);
+                                            console.log(index);
+                                            user.car.riders[direction][day].splice(index, 1);
+
+                                            var alertMessage = $rootScope.currentUser.name + " has been removed from your car going " + direction + " school on " + day + " at " + $scope.getTime(user.riderTimes[direction][day].time + "because they changed their schedule.");
+                                                                    alertService.saveAlert(user.$id, alertMessage, "warning");
+                                            $rootScope.currentUser.riderTimes[direction][day].driver = null;
+                                            $rootScope.testDrivers[direction][day].driver = null
+
+                                            user.$save();
+                                            $rootScope.currentUser.$save();
+
+                                        });
+
+
+                                        $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime($scope[direction][day]);
+                                    } else {
+                                        $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime($scope[direction][day]);
+                                    }
+                                } else {
+                                    // day does not exist make new day
+                                    $rootScope.currentUser.riderTimes[direction][day] = {};
+                                    $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime($scope[direction][day]);
+                                }
+                            } else {
+                                //direction does not exit make new direction
+                                $rootScope.currentUser.riderTimes[direction] = {};
+                                $rootScope.currentUser.riderTimes[direction][day] = {};
+                                $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime($scope[direction][day]);
+
+                            }
+                        }
+
+                    })
+                }
+
             });
-            user.$save();
+            $rootScope.currentUser.$save();
             /*
             var alertMessage = $rootScope.currentUser.name + " has changed their time going " + [direction] + " school on " + [day] + " and has been removed from your carpool.";
             alertService.saveAlert(user.$id, alertMessage, "warning"); */
