@@ -869,14 +869,14 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                     }
                                 }
                             } else {
-                                // //creating new schedule
-                                // //
-                                // console.log("making new sched");
-                                // $rootScope.currentUser.riderTimes = {};
-                                // $rootScope.currentUser.riderTimes[direction] = {};
-                                // $rootScope.currentUser.riderTimes[direction][day] = {};
-                                // $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime($scope[direction][day]);
-                                // $rootScope.currentUser.$save();
+                                //creating new schedule
+                                //
+                                console.log("making new sched");
+                                $rootScope.currentUser.riderTimes = {};
+                                $rootScope.currentUser.riderTimes[direction] = {};
+                                $rootScope.currentUser.riderTimes[direction][day] = {};
+                                $rootScope.currentUser.riderTimes[direction][day].time = $scope.setTime($scope[direction][day]);
+                                $rootScope.currentUser.$save();
 
                             }
 
