@@ -837,7 +837,7 @@ carpoolApp.controller('carpoolCtrl', function($rootScope, $scope, $http, $fireba
                                             console.log(index);
                                             user.car.riders[direction][day].splice(index, 1);
 
-                                            var alertMessage = $rootScope.currentUser.name + " has been removed from your car going " + direction + " school on " + day + " at " + $scope.getTime(user.riderTimes[direction][day].time + "because they changed their schedule.");
+                                            var alertMessage = $rootScope.currentUser.name + " has been removed from your car going " + direction + " school on " + day + " at " + $scope.getTime($rootScope.currentUser.riderTimes[direction][day].time) + " because they changed their schedule.";
                                                                     alertService.saveAlert(user.$id, alertMessage, "warning");
                                             $rootScope.currentUser.riderTimes[direction][day].driver = null;
                                             $rootScope.testDrivers[direction][day].driver = null
